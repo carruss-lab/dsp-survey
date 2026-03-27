@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Started — DSP Connect</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1a2332;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 540px;
+    overflow: hidden;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 4px;
+    background: #e8edf5;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #1a56db;
+    border-radius: 0 2px 2px 0;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .card-inner {
+    padding: 40px 40px 36px;
+  }
+
+  /* Step counter */
+  .step-counter {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1a56db;
+    margin-bottom: 10px;
+  }
+
+  .question {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a2332;
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+
+  .question-sub {
+    font-size: 14px;
+    color: #6b7d94;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid #dce4ef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+
+  .option:hover {
+    border-color: #1a56db;
+    background: #f5f8ff;
+  }
+
+  .option.selected {
+    border-color: #1a56db;
+    background: #f0f5ff;
+  }
+
+  .option-radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #c8d5e8;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s;
+  }
+
+  .option.selected .option-radio {
+    border-color: #1a56db;
+    background: #1a56db;
+  }
+
+  .option-radio-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .option.selected .option-radio-dot {
+    opacity: 1;
+  }
+
+  .option-text {
+    font-size: 15px;
+    color: #1a2332;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .option.selected .option-text {
+    color: #1a56db;
+  }
+
+  .option-desc {
+    font-size: 12px;
+    color: #8a9ab0;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  /* Button */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    background: #1a56db;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn:hover { background: #1645c0; }
+  .btn:active { transform: scale(0.99); }
+
+  .btn:disabled {
+    background: #c8d5e8;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-arrow { font-size: 18px; line-height: 1; }
+
+  /* Screen transitions */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Result screen */
+  .result-icon {
+    width: 56px;
+    height: 56px;
+    background: #f0f5ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 26px;
+  }
+
+  .result-track {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #1a56db;
+    background: #f0f5ff;
+    border: 1px solid #c8d8f8;
+    border-radius: 100px;
+    padding: 4px 14px;
+    margin-bottom: 16px;
+  }
+
+  .result-heading {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a2332;
+    margin-bottom: 10px;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .result-body {
+    font-size: 14px;
+    color: #5a6a7a;
+    line-height: 1.7;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .result-steps {
+    background: #f7f9fc;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+
+  .result-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e8edf5;
+  }
+
+  .result-step:last-child { border-bottom: none; }
+
+  .step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #1a56db;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text {
+    font-size: 13px;
+    color: #3d4f65;
+    line-height: 1.5;
+  }
+
+  .step-text strong {
+    color: #1a2332;
+    font-weight: 600;
+    display: block;
+  }
+
+  .disclaimer {
+    font-size: 11px;
+    color: #a0adb8;
+    text-align: center;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 480px) {
+    .card-inner { padding: 28px 22px 24px; }
+    .question { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width: 33%"></div>
+  </div>
+
+  <div class="card-inner">
+
+    <!-- Q1 -->
+    <div class="screen active" id="screen-1">
+      <div class="step-counter">Step 1 of 3</div>
+      <h2 class="question">How familiar are you with programmatic advertising?</h2>
+      <p class="question-sub">We'll tailor your experience based on where you're starting from.</p>
+      <div class="options" id="opts-1">
+        <label class="option" data-val="new">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">New to it — still learning</div>
+            <div class="option-desc">I know digital advertising but programmatic is newer territory</div>
+          </div>
+        </label>
+        <label class="option" data-val="some">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Some experience</div>
+            <div class="option-desc">I've run programmatic campaigns but want to do more</div>
+          </div>
+        </label>
+        <label class="option" data-val="experienced">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">I run programmatic regularly</div>
+            <div class="option-desc">It's a core part of how I manage client media</div>
+          </div>
+        </label>
+      </div>
+      <button class="btn" id="btn-1" disabled onclick="next(1)">
+        Continue <span class="btn-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- Q2 -->
+    <div class="screen" id="screen-2">
+      <div class="step-counter">Step 2 of 3</div>
+      <h2 class="question">What best describes you?</h2>
+      <p class="question-sub">This helps us show you the right setup path.</p>
+      <div class="options" id="opts-2">
+        <label class="option" data-val="boutique">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Independent agency or boutique</div>
+            <div class="option-desc">Small to mid-size, managing multiple client accounts</div>
+          </div>
+        </label>
+        <label class="option" data-val="fullservice">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Full-service agency</div>
+            <div class="option-desc">Programmatic is one of several services we offer</div>
+          </div>
+        </label>
+        <label class="option" data-val="consultant">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Media consultant or freelancer</div>
+            <div class="option-desc">Independent operator managing campaigns for clients</div>
+          </div>
+        </label>
+        <label class="option" data-val="inhouse">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Brand running in-house</div>
+            <div class="option-desc">Managing our own media without an agency</div>
+          </div>
+        </label>
+      </div>
+      <button class="btn" id="btn-2" disabled onclick="next(2)">
+        Continue <span class="btn-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- Q3 -->
+    <div class="screen" id="screen-3">
+      <div class="step-counter">Step 3 of 3</div>
+      <h2 class="question">What's your primary goal right now?</h2>
+      <p class="question-sub">Last one — then we'll get you straight into the platform.</p>
+      <div class="options" id="opts-3">
+        <label class="option" data-val="revenue">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Add a new revenue stream</div>
+            <div class="option-desc">Earn partner revenue from spend I already manage</div>
+          </div>
+        </label>
+        <label class="option" data-val="inventory">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Access better inventory</div>
+            <div class="option-desc">Reach more SSPs and premium placements for clients</div>
+          </div>
+        </label>
+        <label class="option" data-val="switch">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Replace my current DSP</div>
+            <div class="option-desc">Move away from contracts, minimums, or a platform that competes with me</div>
+          </div>
+        </label>
+        <label class="option" data-val="test">
+          <div class="option-radio"><div class="option-radio-dot"></div></div>
+          <div>
+            <div class="option-text">Test before committing</div>
+            <div class="option-desc">Start small and see how it performs</div>
+          </div>
+        </label>
+      </div>
+      <button class="btn" id="btn-3" disabled onclick="showResult()">
+        Show my setup path <span class="btn-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- Result: Track A — New to programmatic -->
+    <div class="screen" id="result-A">
+      <div style="text-align:center;">
+        <div class="result-icon">🎯</div>
+        <div class="result-track">Foundation Track</div>
+        <h2 class="result-heading">Let's build your programmatic foundation.</h2>
+        <p class="result-body">You'll get a guided walkthrough designed to move from concept to live campaign at exactly the right pace — no jargon, no overwhelm.</p>
+      </div>
+      <div class="result-steps">
+        <div class="result-step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Interactive platform tour</strong>The walkthrough starts automatically — it'll highlight each section and explain what it does as you go.</div>
+        </div>
+        <div class="result-step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Fund your account</strong>Start with any amount. No minimum. You control every dollar.</div>
+        </div>
+        <div class="result-step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Launch your first campaign</strong>We'll walk you through it step by step. Your help desk has everything you need, and our team is one message away.</div>
+        </div>
+      </div>
+      <button class="btn" onclick="goToDashboard('A')">
+        Enter the platform <span class="btn-arrow">→</span>
+      </button>
+      <p class="disclaimer">Your setup path has been saved. The platform walkthrough will start automatically when you log in.</p>
+    </div>
+
+    <!-- Result: Track B — Experienced -->
+    <div class="screen" id="result-B">
+      <div style="text-align:center;">
+        <div class="result-icon">⚡</div>
+        <div class="result-track">Fast-Launch Track</div>
+        <h2 class="result-heading">You're ready to move fast. So are we.</h2>
+        <p class="result-body">We'll skip the basics and get you to a live campaign as quickly as possible. Your first partner revenue starts from dollar one.</p>
+      </div>
+      <div class="result-steps">
+        <div class="result-step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Quick platform orientation</strong>A fast walkthrough focused on what's different about DSP Connect — not the fundamentals you already know.</div>
+        </div>
+        <div class="result-step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Fund and launch</strong>Set up your first campaign. The platform will show your estimated partner revenue in real time as you configure spend.</div>
+        </div>
+        <div class="result-step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Scale what works</strong>Once your first campaign is live, we'll check in with performance data and partner revenue tracking.</div>
+        </div>
+      </div>
+      <button class="btn" onclick="goToDashboard('B')">
+        Enter the platform <span class="btn-arrow">→</span>
+      </button>
+      <p class="disclaimer">Your setup path has been saved. The platform walkthrough will start automatically when you log in.</p>
+    </div>
+
+    <!-- Result: Track C — Ready to switch -->
+    <div class="screen" id="result-C">
+      <div style="text-align:center;">
+        <div class="result-icon">🔄</div>
+        <div class="result-track">Migration Track</div>
+        <h2 class="result-heading">Let's make the transition seamless.</h2>
+        <p class="result-body">You know what you need — a platform that works for you, not against you. We'll focus on getting your existing workflows running on DSP Connect fast.</p>
+      </div>
+      <div class="result-steps">
+        <div class="result-step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>Migration-focused walkthrough</strong>The platform tour highlights what's different from the DSP you're coming from and how to replicate your current setup.</div>
+        </div>
+        <div class="result-step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Optional: 15-minute migration call</strong>Want a human to walk you through moving your campaigns? Book a quick call — we'll handle it together.</div>
+        </div>
+        <div class="result-step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>Launch and earn from day one</strong>Your partner revenue starts immediately. No ramp period, no threshold to hit first.</div>
+        </div>
+      </div>
+      <button class="btn" onclick="goToDashboard('C')">
+        Enter the platform <span class="btn-arrow">→</span>
+      </button>
+      <p class="disclaimer">Your setup path has been saved. A team member may reach out to offer migration support.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var answers = { q1: null, q2: null, q3: null };
+
+  // Wire up option clicks
+  [1,2,3].forEach(function(q) {
+    var opts = document.querySelectorAll('#opts-' + q + ' .option');
+    opts.forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        opts.forEach(function(o) { o.classList.remove('selected'); });
+        opt.classList.add('selected');
+        answers['q' + q] = opt.getAttribute('data-val');
+        document.getElementById('btn-' + q).disabled = false;
+      });
+    });
+  });
+
+  function next(current) {
+    document.getElementById('screen-' + current).classList.remove('active');
+    var nextNum = current + 1;
+    document.getElementById('screen-' + nextNum).classList.add('active');
+    document.getElementById('progressFill').style.width = (nextNum / 3 * 100) + '%';
+    window.scrollTo(0, 0);
+  }
+
+  function getTrack() {
+    // Track C: wants to switch DSP — highest priority
+    if (answers.q3 === 'switch') return 'C';
+    // Track A: new to programmatic
+    if (answers.q1 === 'new') return 'A';
+    // Track B: experienced
+    return 'B';
+  }
+
+  function showResult() {
+    var track = getTrack();
+    document.getElementById('screen-3').classList.remove('active');
+    document.getElementById('result-' + track).classList.add('active');
+    document.getElementById('progressFill').style.width = '100%';
+
+    // ── Fire your tracking here ──────────────────────────────
+    // Replace with your actual user ID source and analytics calls.
+    //
+    // Example — push to dataLayer (Google Tag Manager):
+    // window.dataLayer = window.dataLayer || [];
+    // window.dataLayer.push({
+    //   event: 'dsp_onboarding_complete',
+    //   user_id: YOUR_USER_ID,
+    //   track: track,
+    //   q1_programmatic: answers.q1,
+    //   q2_role: answers.q2,
+    //   q3_goal: answers.q3
+    // });
+    //
+    // Example — Intercom custom attributes:
+    // window.Intercom('update', {
+    //   onboarding_track: track,
+    //   programmatic_experience: answers.q1,
+    //   agency_type: answers.q2,
+    //   primary_goal: answers.q3
+    // });
+    // ────────────────────────────────────────────────────────
+  }
+
+  function goToDashboard(track) {
+    // Replace with your actual dashboard URL
+    // You can append track as a query param so the platform
+    // knows which walkthrough to trigger:
+    // window.location.href = 'https://dashboard.getdspconnect.com?track=' + track;
+    alert('Redirect to dashboard — track: ' + track + '\n\nReplace this with:\nwindow.location.href = "https://dashboard.getdspconnect.com?track=' + track + '"');
+  }
+</script>
+
+</body>
+</html>
