@@ -556,11 +556,18 @@
   }
 
   function goToDashboard(track) {
-    // Replace with your actual dashboard URL
-    // You can append track as a query param so the platform
-    // knows which walkthrough to trigger:
-    // window.location.href = 'https://dashboard.getdspconnect.com?track=' + track;
-    window.location.href = 'https://dsp.getdspconnect.com?track=' + track;
+    var roleMap = {
+      boutique:    'independent_agency',
+      fullservice: 'fullservice_agency',
+      consultant:  'media_consultant',
+      inhouse:     'brand_inhouse'
+    };
+    var role = roleMap[answers.q2] || 'unknown';
+    var url = 'https://dsp.getdspconnect.com'
+      + '?utm_campaign=onboarding'
+      + '&utm_content=track_' + track.toLowerCase()
+      + '&utm_term=' + role;
+    window.location.href = url;
   }
 </script>
 
