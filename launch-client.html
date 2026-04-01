@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Campaign Setup</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue:       #1F00DA;
+      --blue-dark:  #1700b0;
+      --blue-light: rgba(31,0,218,0.07);
+      --blue-mid:   rgba(31,0,218,0.12);
+      --bg:         #ffffff;
+      --surface:    #f7f8fa;
+      --border:     #e2e4ed;
+      --text:       #0a0a0a;
+      --muted:      #6b7280;
+      --muted-lt:   #9ca3af;
+      --error:      #dc2626;
+      --success:    #059669;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #fff;
+      color: var(--text);
+      font-family: Inter, sans-serif;
+      font-size: 16px;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    /* ── Step header bar ── */
+    .step-bar {
+      width: 100%;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      height: 56px;
+    }
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 24px;
+      border-right: 1px solid var(--border);
+      cursor: default;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .step-item:first-child { padding-left: 0; }
+    .step-num {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600;
+      color: var(--muted-lt);
+      flex-shrink: 0;
+      transition: all 0.25s;
+    }
+    .step-item.active .step-num { border-color: var(--blue); background: var(--blue); color: #fff; }
+    .step-item.done .step-num   { border-color: var(--blue); background: var(--blue); color: #fff; }
+    .step-label {
+      font-size: 13px; font-weight: 500;
+      color: var(--muted-lt);
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .step-item.active .step-label { color: var(--text); font-weight: 600; }
+    .step-item.done .step-label   { color: var(--blue); }
+
+    /* ── Layout ── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* ── Left guide panel ── */
+    .guide {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 40px 32px;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+    .guide-step-num {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--blue); margin-bottom: 8px;
+    }
+    .guide-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px; font-weight: 400;
+      line-height: 1.25; margin-bottom: 14px;
+      color: var(--text);
+    }
+    .guide-desc {
+      font-size: 13px; color: var(--muted);
+      line-height: 1.7;
+    }
+    .guide-tips {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .guide-tip-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted-lt); margin-bottom: 12px;
+    }
+    .guide-tip {
+      display: flex; gap: 10px;
+      margin-bottom: 14px;
+      font-size: 13px; color: var(--muted); line-height: 1.55;
+    }
+    .guide-tip-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--blue); flex-shrink: 0; margin-top: 6px;
+    }
+
+    /* ── Main form area ── */
+    .main {
+      flex: 1;
+      padding: 48px 52px;
+      max-width: 680px;
+    }
+
+    /* ── Step panels ── */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Fields ── */
+    .field { margin-bottom: 28px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    label {
+      display: block;
+      font-size: 14px; font-weight: 600;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .label-sub {
+      font-size: 12px; font-weight: 400;
+      color: var(--muted); margin-left: 6px;
+    }
+    .field-hint {
+      font-size: 12px; color: var(--muted-lt);
+      margin-top: 6px; line-height: 1.55;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 0;
+      padding: 12px 14px;
+      font-family: Inter, sans-serif;
+      font-size: 15px; color: var(--text);
+      background: #fff; outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus { border-color: var(--blue); }
+    input::placeholder, textarea::placeholder { color: var(--muted-lt); }
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* Budget */
+    .budget-wrap {
+      display: flex;
+      border: 1.5px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .budget-wrap:focus-within { border-color: var(--blue); }
+    .budget-sym {
+      padding: 12px 14px; background: var(--surface);
+      font-size: 14px; color: var(--muted);
+      border-right: 1px solid var(--border); user-select: none;
+    }
+    .budget-wrap input { border: none; flex: 1; }
+    .budget-wrap input:focus { border: none; }
+
+    /* Goal cards — Facebook style */
+    .goal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .goal-card {
+      border: 1.5px solid var(--border);
+      background: #fff;
+      padding: 16px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      user-select: none;
+    }
+    .goal-card:hover { border-color: var(--blue); background: var(--blue-light); }
+    .goal-card.sel   { border-color: var(--blue); background: var(--blue-light); }
+    .goal-card.sel .goal-icon { background: var(--blue); color: #fff; }
+    .goal-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; margin: 0 auto 10px;
+      transition: all 0.15s;
+    }
+    .goal-name {
+      font-size: 12px; font-weight: 600; color: var(--text);
+      line-height: 1.3;
+    }
+    .goal-desc {
+      font-size: 11px; color: var(--muted);
+      margin-top: 4px; line-height: 1.4;
+    }
+
+    /* Geo tag input */
+    .geo-wrap {
+      border: 1.5px solid var(--border);
+      padding: 8px 10px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      cursor: text; transition: border-color 0.2s;
+      min-height: 50px; align-items: center;
+      background: #fff;
+    }
+    .geo-wrap.focused { border-color: var(--blue); }
+    .geo-tag {
+      background: var(--blue-light);
+      border: 1px solid rgba(31,0,218,0.2);
+      color: var(--blue);
+      font-size: 13px; font-weight: 500;
+      padding: 4px 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .geo-tag button {
+      background: none; border: none; color: var(--blue);
+      cursor: pointer; font-size: 15px; padding: 0;
+      line-height: 1; opacity: 0.5;
+    }
+    .geo-tag button:hover { opacity: 1; }
+    .geo-input {
+      border: none !important; padding: 4px !important;
+      font-size: 14px !important; flex: 1; min-width: 160px;
+      outline: none !important; background: transparent;
+      font-family: Inter, sans-serif; color: var(--text);
+    }
+    .geo-presets {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 8px; align-items: center;
+    }
+    .geo-presets span { font-size: 12px; color: var(--muted-lt); }
+    .geo-preset {
+      font-size: 12px; color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 3px 10px; cursor: pointer;
+      background: #fff; transition: all 0.15s;
+    }
+    .geo-preset:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* Review rows */
+    .review-block {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      margin-bottom: 24px;
+    }
+    .review-row {
+      display: flex; justify-content: space-between;
+      align-items: flex-start;
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--border);
+      gap: 24px;
+    }
+    .review-row:last-child { border-bottom: none; }
+    .review-key { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+    .review-val { font-size: 14px; color: var(--text); text-align: right; }
+    .edit-link {
+      font-size: 12px; color: var(--blue);
+      text-decoration: underline; cursor: pointer;
+      white-space: nowrap; margin-left: 12px;
+    }
+
+    /* Error */
+    .err { font-size: 12px; color: var(--error); margin-top: 6px; display: none; }
+    .err.show { display: block; }
+    .invalid { border-color: var(--error) !important; }
+
+    /* ── Footer nav ── */
+    .form-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 32px;
+      margin-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-back {
+      background: none; border: 1.5px solid var(--border);
+      color: var(--muted); font-family: Inter, sans-serif;
+      font-size: 14px; font-weight: 500;
+      padding: 10px 24px; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-back:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-next {
+      background: var(--blue); border: 2px solid var(--blue);
+      color: #fff; font-family: Inter, sans-serif;
+      font-size: 15px; font-weight: 600;
+      padding: 12px 32px; cursor: pointer; transition: all 0.15s;
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .btn-next:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
+    .btn-next:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── Success ── */
+    #successView { display: none; }
+    .suc-wrap { padding: 60px 52px; max-width: 560px; }
+    .suc-check {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--blue-light); border: 2px solid var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+    }
+    .suc-check svg { color: var(--blue); }
+    .suc-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px; font-weight: 400; margin-bottom: 10px;
+    }
+    .suc-sub {
+      font-size: 15px; color: var(--muted);
+      line-height: 1.7; margin-bottom: 32px; max-width: 440px;
+    }
+    .sum-box { border: 1px solid var(--border); background: var(--surface); margin-bottom: 28px; }
+    .sum-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 20px; border-bottom: 1px solid var(--border); gap: 20px; }
+    .sum-row:last-child { border-bottom: none; }
+    .sum-k { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+    .sum-v { font-size: 14px; color: var(--text); text-align: right; }
+
+    .what-next {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 22px 24px;
+      margin-bottom: 28px;
+    }
+    .what-next strong { font-size: 14px; color: var(--text); display: block; margin-bottom: 14px; }
+    .next-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      margin-bottom: 12px; font-size: 13px; color: var(--muted); line-height: 1.5;
+    }
+    .next-item:last-child { margin-bottom: 0; }
+    .next-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--blue); flex-shrink: 0; margin-top: 6px;
+    }
+
+    .btn-another {
+      background: none; border: 2px solid var(--blue); color: var(--blue);
+      font-family: Inter, sans-serif; font-size: 15px; font-weight: 600;
+      padding: 12px 28px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px; transition: all 0.15s;
+    }
+    .btn-another:hover { background: var(--blue); color: #fff; }
+
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    @media (max-width: 768px) {
+      .guide { display: none; }
+      .main { padding: 32px 20px; }
+      .goal-grid { grid-template-columns: 1fr 1fr; }
+      .step-bar { padding: 0 20px; gap: 0; overflow-x: auto; }
+      .step-item { padding: 0 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .goal-grid { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Step bar -->
+<div class="step-bar" id="stepBar">
+  <div class="step-item active" data-s="1">
+    <div class="step-num">1</div>
+    <div class="step-label">Client</div>
+  </div>
+  <div class="step-item" data-s="2">
+    <div class="step-num">2</div>
+    <div class="step-label">Goal</div>
+  </div>
+  <div class="step-item" data-s="3">
+    <div class="step-num">3</div>
+    <div class="step-label">Budget & Reach</div>
+  </div>
+  <div class="step-item" data-s="4">
+    <div class="step-num">4</div>
+    <div class="step-label">Review</div>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="layout" id="mainLayout">
+
+  <!-- Guide panel -->
+  <div class="guide" id="guidePanel">
+    <!-- Content injected by JS per step -->
+  </div>
+
+  <!-- Form area -->
+  <div class="main">
+
+    <!-- Step 1: Client -->
+    <div class="step-panel active" id="step1">
+
+      <div class="field" id="agencyFieldWrap">
+        <label>Your Agency Name</label>
+        <input type="text" id="agencyName" placeholder="e.g. Horizon Media Group" />
+        <div class="field-hint">So we know which account this campaign belongs to.</div>
+        <div class="err" id="e-agency">Please enter your agency name.</div>
+      </div>
+
+      <div class="field">
+        <label>What is this client's brand or business name?</label>
+        <input type="text" id="clientName" placeholder="e.g. Sunrise Dental Group" />
+        <div class="err" id="e-name">Please enter a client name.</div>
+      </div>
+
+      <div class="field">
+        <label>Where should campaign traffic go?</label>
+        <input type="url" id="landingPage" placeholder="https://clientsite.com" />
+        <div class="field-hint">The landing page URL for this campaign. You can update this anytime inside the platform.</div>
+        <div class="err" id="e-url">Please enter a valid URL starting with https://</div>
+      </div>
+
+      <div class="form-nav">
+        <div></div>
+        <button class="btn-next" onclick="goNext(1)">
+          Continue
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Goal -->
+    <div class="step-panel" id="step2">
+
+      <div class="field">
+        <label>What is the primary goal of this campaign?</label>
+        <div class="goal-grid" id="goalGrid">
+          <div class="goal-card" onclick="pickGoal(this)" data-goal="Brand Awareness">
+            <div class="goal-icon">📣</div>
+            <div class="goal-name">Brand Awareness</div>
+            <div class="goal-desc">Reach new audiences and build recognition</div>
+          </div>
+          <div class="goal-card" onclick="pickGoal(this)" data-goal="Lead Generation">
+            <div class="goal-icon">🎯</div>
+            <div class="goal-name">Lead Generation</div>
+            <div class="goal-desc">Capture interest from high-intent prospects</div>
+          </div>
+          <div class="goal-card" onclick="pickGoal(this)" data-goal="Website Traffic">
+            <div class="goal-icon">🌐</div>
+            <div class="goal-name">Website Traffic</div>
+            <div class="goal-desc">Drive qualified visitors to their site</div>
+          </div>
+          <div class="goal-card" onclick="pickGoal(this)" data-goal="Retargeting">
+            <div class="goal-icon">🔁</div>
+            <div class="goal-name">Retargeting</div>
+            <div class="goal-desc">Re-engage visitors who didn't convert</div>
+          </div>
+          <div class="goal-card" onclick="pickGoal(this)" data-goal="Store Visits">
+            <div class="goal-icon">📍</div>
+            <div class="goal-name">Store Visits</div>
+            <div class="goal-desc">Drive foot traffic to physical locations</div>
+          </div>
+          <div class="goal-card" onclick="pickGoal(this)" data-goal="Video Views">
+            <div class="goal-icon">▶️</div>
+            <div class="goal-name">Video Views</div>
+            <div class="goal-desc">Maximize engagement with video content</div>
+          </div>
+        </div>
+        <div class="err" id="e-goal">Please select a campaign goal.</div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="goBack(2)">← Back</button>
+        <button class="btn-next" onclick="goNext(2)">
+          Continue
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Budget & Reach -->
+    <div class="step-panel" id="step3">
+
+      <div class="field">
+        <label>What is the monthly budget for this campaign?</label>
+        <div class="budget-wrap">
+          <span class="budget-sym">USD $</span>
+          <input type="number" id="budget" placeholder="2,500" min="500" />
+        </div>
+        <div class="field-hint">Minimum $500/month. You can adjust pacing and spend inside the platform at any time.</div>
+        <div class="err" id="e-bud">Minimum budget is $500/month.</div>
+      </div>
+
+      <div class="field">
+        <label>Optimization Goal</label>
+        <select id="optGoal" style="width:100%;border:1.5px solid var(--border);border-radius:0;padding:12px 14px;font-family:Inter,sans-serif;font-size:15px;color:var(--text);background:#fff;outline:none;appearance:none;-webkit-appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          <option value="">Select how to optimize delivery...</option>
+          <option value="Max Reach (CPM)">Max Reach — CPM · Maximize impressions across your target audience</option>
+          <option value="Traffic (CPC)">Traffic — CPC · Optimize for clicks to the landing page</option>
+          <option value="Leads (CPA)">Leads — CPA · Optimize for conversions and lead actions</option>
+        </select>
+        <div class="field-hint">This tells the platform how to bid and deliver ads. Your team can adjust this inside the platform after launch.</div>
+        <div class="err" id="e-opt">Please select an optimization goal.</div>
+      </div>
+
+      <div class="field">
+        <label>Where should this campaign reach people?</label>
+        <div class="geo-wrap" id="geoWrap" onclick="document.getElementById('geoInput').focus()">
+          <input
+            id="geoInput"
+            class="geo-input"
+            type="text"
+            placeholder="Type a location and press Enter — country, city, zip, anything"
+            onkeydown="handleGeoKey(event)"
+            onfocus="document.getElementById('geoWrap').classList.add('focused')"
+            onblur="document.getElementById('geoWrap').classList.remove('focused')"
+          />
+        </div>
+        <div class="geo-presets">
+          <span>Quick add:</span>
+          <div class="geo-preset" onclick="addGeo('United States')">United States</div>
+          <div class="geo-preset" onclick="addGeo('Canada')">Canada</div>
+          <div class="geo-preset" onclick="addGeo('United Kingdom')">United Kingdom</div>
+          <div class="geo-preset" onclick="addGeo('Australia')">Australia</div>
+          <div class="geo-preset" onclick="addGeo('Global')">Global</div>
+        </div>
+        <div class="field-hint">Global down to zip code — add as many locations as needed. Refine further inside the platform.</div>
+        <div class="err" id="e-geo">Please add at least one location.</div>
+      </div>
+
+      <div class="field">
+        <label>Anything else we should know? <span class="label-sub">(optional)</span></label>
+        <textarea id="notes" placeholder="Audience details, timing preferences, creative notes — anything helpful for setting up this campaign..."></textarea>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="goBack(3)">← Back</button>
+        <button class="btn-next" onclick="goNext(3)">
+          Review Campaign
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 4: Review -->
+    <div class="step-panel" id="step4">
+
+      <div style="margin-bottom: 24px;">
+        <div style="font-family:'DM Serif Display',serif; font-size:22px; margin-bottom:6px;">Looks good — review before submitting</div>
+        <div style="font-size:14px; color:var(--muted); line-height:1.6;">We'll prepare your campaign based on these inputs. Once it's ready, you'll have full access inside the platform to refine targeting, upload first-party data, add creative, and manage everything directly.</div>
+      </div>
+
+      <div class="review-block" id="reviewBlock"></div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="goBack(4)">← Edit</button>
+        <button class="btn-next" id="submitBtn" onclick="doSubmit()">
+          Submit Campaign
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- Success view (replaces layout) -->
+<div id="successView">
+  <div class="suc-wrap">
+    <div class="suc-check">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h2 class="suc-title">Campaign submitted.</h2>
+    <p class="suc-sub">We'll prepare this campaign based on your inputs. You can make changes and manage everything directly inside the platform once it's live — typically within 1 business day.</p>
+
+    <div class="sum-box" id="sumBox"></div>
+
+    <div class="what-next">
+      <strong>You'll have full access to manage from your dashboard:</strong>
+      <div class="next-item"><div class="next-dot"></div>Refine targeting to any country, city, or zip code</div>
+      <div class="next-item"><div class="next-dot"></div>Upload and activate first-party audience data</div>
+      <div class="next-item"><div class="next-dot"></div>Add creative assets and ad formats</div>
+      <div class="next-item"><div class="next-dot"></div>Adjust budget, pacing, and flight dates</div>
+      <div class="next-item"><div class="next-dot"></div>Monitor performance and pull reports in real time</div>
+    </div>
+
+    <button class="btn-another" onclick="doReset()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
+      Set Up Another Client
+    </button>
+  </div>
+</div>
+
+<script>
+  // ─── Guide content per step ───────────────────────────────
+  const guides = {
+    1: {
+      num: 'Step 1 of 4',
+      title: 'Start with the basics',
+      desc: "Tell us who this campaign is for and where you want to send people. These two things are all we need to get started — everything else can be adjusted inside the platform.",
+      tips: [
+        "Use the client's actual brand name so it's easy to find in your dashboard.",
+        "The landing page can be changed anytime — use your best one for now.",
+      ]
+    },
+    2: {
+      num: 'Step 2 of 4',
+      title: 'Choose a campaign goal',
+      desc: "Your goal tells the platform how to optimize delivery — who to reach, when to show ads, and how to measure success. Pick the one that best matches what this client needs right now.",
+      tips: [
+        "You can run multiple campaigns with different goals for the same client later.",
+        "Retargeting works best once the brand awareness campaign has been running for a few weeks.",
+      ]
+    },
+    3: {
+      num: 'Step 3 of 4',
+      title: 'Budget & targeting',
+      desc: "Set a starting budget and define where you want to reach people. This is your starting point — you can get as granular as zip code level inside the platform after setup.",
+      tips: [
+        "Start broader and narrow down as you see performance data.",
+        "First-party audience uploads happen inside the platform — add location targets here to get started.",
+      ]
+    },
+    4: {
+      num: 'Step 4 of 4',
+      title: 'Review & confirm',
+      desc: "Take a final look before you submit. Once submitted, we'll prepare the campaign and you'll be notified when it's live and ready to manage.",
+      tips: [
+        "Nothing is locked in — all settings are editable inside the platform after launch.",
+        "Creative assets and first-party data are uploaded directly in your dashboard.",
+      ]
+    }
+  };
+
+  function renderGuide(s) {
+    const g = guides[s];
+    document.getElementById('guidePanel').innerHTML = `
+      <div class="guide-step-num">${g.num}</div>
+      <div class="guide-title">${g.title}</div>
+      <div class="guide-desc">${g.desc}</div>
+      <div class="guide-tips">
+        <div class="guide-tip-label">Tips</div>
+        ${g.tips.map(t => `<div class="guide-tip"><div class="guide-tip-dot"></div>${t}</div>`).join('')}
+      </div>
+    `;
+  }
+
+  // ─── State ───────────────────────────────────────────────
+  let goal = '', geos = [];
+
+  // ─── Geo ─────────────────────────────────────────────────
+  function handleGeoKey(e) {
+    const inp = document.getElementById('geoInput');
+    const val = inp.value.trim();
+    if ((e.key === 'Enter' || e.key === ',') && val) {
+      e.preventDefault();
+      addGeo(val);
+      inp.value = '';
+    }
+    if (e.key === 'Backspace' && !val && geos.length) {
+      removeGeo(geos[geos.length - 1]);
+    }
+  }
+
+  function addGeo(val) {
+    val = val.replace(/,$/, '').trim();
+    if (!val || geos.includes(val)) return;
+    geos.push(val);
+    renderGeos();
+    document.getElementById('geoInput').value = '';
+  }
+
+  function removeGeo(val) {
+    geos = geos.filter(g => g !== val);
+    renderGeos();
+  }
+
+  function renderGeos() {
+    const wrap = document.getElementById('geoWrap');
+    wrap.querySelectorAll('.geo-tag').forEach(t => t.remove());
+    const inp = document.getElementById('geoInput');
+    geos.forEach(geo => {
+      const tag = document.createElement('div');
+      tag.className = 'geo-tag';
+      const safe = geo.replace(/'/g, "\\'");
+      tag.innerHTML = `${esc(geo)}<button type="button" onclick="removeGeo('${safe}')" tabindex="-1">×</button>`;
+      wrap.insertBefore(tag, inp);
+    });
+    inp.placeholder = geos.length ? '' : "Type a location and press Enter — country, city, zip, anything";
+  }
+
+  // ─── Goal ────────────────────────────────────────────────
+  function pickGoal(el) {
+    document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('sel'));
+    el.classList.add('sel');
+    goal = el.dataset.goal;
+  }
+
+  // ─── Helpers ─────────────────────────────────────────────
+  function g(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c =>
+      ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ─── Validation ──────────────────────────────────────────
+  function validate(s) {
+    let ok = true;
+    const se = id => { g(id).classList.add('show'); ok = false; };
+    const he = id => g(id).classList.remove('show');
+    const bi = (id, bad) => { const el = g(id); if (el) el.classList.toggle('invalid', bad); };
+
+    if (s === 1) {
+      const agency = g('agencyName').value.trim();
+      const name   = g('clientName').value.trim();
+      const url    = g('landingPage').value.trim();
+      he('e-agency'); he('e-name'); he('e-url');
+      if (!agency) { se('e-agency'); bi('agencyName', true); } else bi('agencyName', false);
+      if (!name)   { se('e-name');   bi('clientName', true); } else bi('clientName', false);
+      if (url && !url.startsWith('http')) { se('e-url'); bi('landingPage', true); } else bi('landingPage', false);
+    }
+    if (s === 2) {
+      he('e-goal');
+      if (!goal) { se('e-goal'); ok = false; }
+    }
+    if (s === 3) {
+      const bud = parseFloat(g('budget').value);
+      const opt = g('optGoal').value;
+      he('e-bud'); he('e-opt'); he('e-geo');
+      if (!bud || bud < 500) { se('e-bud'); bi('budget', true); } else bi('budget', false);
+      if (!opt)              { se('e-opt'); bi('optGoal', true); } else bi('optGoal', false);
+      if (!geos.length)      { se('e-geo'); ok = false; }
+    }
+    return ok;
+  }
+
+  // ─── Build review ────────────────────────────────────────
+  function buildReview() {
+    const rows = [
+      ['Agency',       g('agencyName').value.trim()],
+      ['Client',       g('clientName').value.trim()],
+      ['Landing Page', g('landingPage').value.trim() || '—'],
+      ['Goal',         goal],
+      ['Budget',       '$' + Number(g('budget').value).toLocaleString() + ' / mo'],
+      ['Optimization', g('optGoal').value],
+      ['Targeting',    geos.join(' · ')],
+      ['Notes',        g('notes').value.trim() || '—'],
+    ];
+    return rows;
+  }
+
+  function renderReview(boxId, editable) {
+    const rows = buildReview();
+    const stepMap = { 'Agency': 1, 'Client': 1, 'Landing Page': 1, 'Goal': 2, 'Budget': 3, 'Optimization': 3, 'Targeting': 3, 'Notes': 3 };
+    g(boxId).innerHTML = rows.map(([k, v]) =>
+      `<div class="review-row">
+        <span class="review-key">${k}</span>
+        <span style="display:flex;align-items:center;gap:0;justify-content:flex-end;flex-wrap:wrap;">
+          <span class="review-val">${esc(v)}</span>
+          ${editable ? `<span class="edit-link" onclick="setStep(${stepMap[k]})">Edit</span>` : ''}
+        </span>
+      </div>`
+    ).join('');
+  }
+
+  // ─── Navigation ──────────────────────────────────────────
+  let currentStep = 1;
+
+  function setStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    g('step' + n)?.classList.add('active');
+    document.querySelectorAll('.step-item').forEach(item => {
+      const s = parseInt(item.dataset.s);
+      item.classList.remove('active', 'done');
+      if (s === n) item.classList.add('active');
+      if (s < n)  item.classList.add('done');
+      item.querySelector('.step-num').textContent = s < n ? '✓' : s;
+    });
+    if (n === 4) renderReview('reviewBlock', true);
+    renderGuide(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goNext(from) { if (validate(from)) setStep(from + 1); }
+  function goBack(from) { setStep(from - 1); }
+
+  // ─── Submit ──────────────────────────────────────────────
+  async function doSubmit() {
+    const btn = g('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 0.9s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Submitting...`;
+
+    // Render success summary
+    renderReview('sumBox', false);
+
+    // TODO: add SLACK_WEBHOOK constant here and fire notification when ready
+    // await fetch(SLACK_WEBHOOK, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...}) });
+
+    g('stepBar').style.display = 'none';
+    g('mainLayout').style.display = 'none';
+    g('successView').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ─── Reset ───────────────────────────────────────────────
+  function doReset() {
+    if (!urlAgency) g('agencyName').value = '';
+    g('clientName').value = '';
+    g('landingPage').value = '';
+    g('budget').value = '';
+    g('optGoal').value = '';
+    g('notes').value = '';
+    goal = ''; geos = [];
+    renderGeos();
+    document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('sel'));
+    document.querySelectorAll('.err').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('.invalid').forEach(e => e.classList.remove('invalid'));
+    g('submitBtn').disabled = false;
+    g('submitBtn').innerHTML = `Submit Campaign <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+    g('successView').style.display = 'none';
+    g('stepBar').style.display = 'flex';
+    g('mainLayout').style.display = 'flex';
+    document.querySelectorAll('.step-item').forEach(n => {
+      n.classList.remove('active', 'done');
+      n.querySelector('.step-num').textContent = n.dataset.s;
+    });
+    setStep(1);
+  }
+
+  // ─── Init ────────────────────────────────────────────────
+  // Read agency from URL param (?agency=Name) — hides field if present
+  const urlAgency = new URLSearchParams(window.location.search).get('agency') || '';
+  if (urlAgency) {
+    document.getElementById('agencyName').value = urlAgency;
+    document.getElementById('agencyFieldWrap').style.display = 'none';
+  }
+  renderGuide(1);
+</script>
+</body>
+</html>
