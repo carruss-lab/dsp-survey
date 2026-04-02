@@ -596,17 +596,24 @@
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
     <h2 class="suc-title">Campaign submitted.</h2>
-    <p class="suc-sub">We'll prepare this campaign based on your inputs. You can make changes and manage everything directly inside the platform once it's live — typically within 1 business day.</p>
+    <p class="suc-sub">We're preparing this campaign based on your inputs. Our team has been notified and will have everything configured within 1 business day.</p>
 
     <div class="sum-box" id="sumBox"></div>
 
+    <div class="what-next" style="border-left: 3px solid var(--blue); padding: 20px 22px; margin-bottom: 24px; background: var(--blue-light);">
+      <strong style="font-size:15px; margin-bottom: 12px; display:block;">⚡ While you wait — get your creative assets ready</strong>
+      <div class="next-item" style="font-size:14px; color: var(--text); margin-bottom: 14px;"><div class="next-dot"></div><span>We're configuring your campaign now. Once we approve the setup — typically within 1 business day — you'll be prompted to upload your creative directly inside the platform.</span></div>
+      <div class="next-item" style="font-size:14px; color: var(--text); margin-bottom: 14px;"><div class="next-dot"></div><span><strong>Do not upload assets yet</strong> — uploading before approval creates duplication. Use this time to get everything prepared and sized correctly.</span></div>
+      <div class="next-item" style="font-size:14px; color: var(--text); margin-bottom:0;"><div class="next-dot"></div><span>Review the creative requirements so you're ready to go the moment we approve: <a href="CREATIVE_SPECS_URL_HERE" style="color:var(--blue); font-weight:600; text-decoration:underline;" target="_blank">View Creative Specifications →</a></span></div>
+    </div>
+
     <div class="what-next">
-      <strong>You'll have full access to manage from your dashboard:</strong>
+      <strong>While we prepare your campaign you'll also be able to:</strong>
+      <div class="next-item"><div class="next-dot"></div>Review and verify everything we've built before anything goes live</div>
       <div class="next-item"><div class="next-dot"></div>Refine targeting to any country, city, or zip code</div>
       <div class="next-item"><div class="next-dot"></div>Upload and activate first-party audience data</div>
-      <div class="next-item"><div class="next-dot"></div>Add creative assets and ad formats</div>
       <div class="next-item"><div class="next-dot"></div>Adjust budget, pacing, and flight dates</div>
-      <div class="next-item"><div class="next-dot"></div>Monitor performance and pull reports in real time</div>
+      <div class="next-item"><div class="next-dot"></div>Fund to activate once you've verified everything is right</div>
     </div>
 
     <button class="btn-another" onclick="doReset()">
@@ -819,8 +826,33 @@
     // Render success summary
     renderReview('sumBox', false);
 
-    // TODO: add SLACK_WEBHOOK constant here and fire notification when ready
-    // await fetch(SLACK_WEBHOOK, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...}) });
+    // ── Slack notification ──────────────────────────────────
+    // Paste your Slack Incoming Webhook URL below to activate
+    const SLACK_WEBHOOK = 'YOUR_SLACK_WEBHOOK_URL_HERE';
+    // Get one at: api.slack.com/apps → Incoming Webhooks → Add to Channel
+
+    if (SLACK_WEBHOOK !== 'YOUR_SLACK_WEBHOOK_URL_HERE') {
+      const rows = buildReview ? buildReview() : [];
+      const fields = rows.map(([k, v]) => ({ type: 'mrkdwn', text: `*${k}:*\n${v}` }));
+      const slackPayload = {
+        text: '🚀 New Client Campaign Submitted — DSP Connect',
+        blocks: [
+          { type: 'header', text: { type: 'plain_text', text: '🚀 New Client Campaign Submitted', emoji: true } },
+          { type: 'section', fields: fields.slice(0, 8) },
+          ...(fields.length > 8 ? [{ type: 'section', fields: fields.slice(8) }] : []),
+          { type: 'divider' },
+          { type: 'context', elements: [{ type: 'mrkdwn', text: `Submitted at ${new Date().toLocaleString()} · Action required: build campaign from this brief` }] }
+        ]
+      };
+      try {
+        await fetch(SLACK_WEBHOOK, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(slackPayload)
+        });
+      } catch(e) { console.warn('Slack notification failed:', e); }
+    }
 
     g('stepBar').style.display = 'none';
     g('mainLayout').style.display = 'none';
