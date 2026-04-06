@@ -194,6 +194,59 @@
     .budget-wrap input { border: none; flex: 1; }
     .budget-wrap input:focus { border: none; }
 
+    /* Channel cards */
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    .channel-card {
+      border: 1.5px solid var(--border);
+      background: #fff;
+      padding: 14px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      user-select: none;
+    }
+    .channel-card:hover { border-color: var(--blue); background: var(--blue-light); }
+    .channel-card.sel   { border-color: var(--blue); background: var(--blue-light); }
+    .channel-card.sel .channel-icon { background: var(--blue); color: #fff; }
+    .channel-icon {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; margin: 0 auto 8px;
+      transition: all 0.15s;
+    }
+    .channel-name { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .channel-desc { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.3; }
+
+    /* Inventory preference */
+    .inv-group { display: flex; flex-direction: column; gap: 10px; }
+    .inv-card {
+      border: 1.5px solid var(--border);
+      background: #fff;
+      padding: 14px 18px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: flex-start; gap: 14px;
+      user-select: none;
+    }
+    .inv-card:hover { border-color: var(--blue); background: var(--blue-light); }
+    .inv-card.sel   { border-color: var(--blue); background: var(--blue-light); }
+    .inv-radio {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0; margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .inv-card.sel .inv-radio { border-color: var(--blue); background: var(--blue); }
+    .inv-card.sel .inv-radio::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff; display: block; }
+    .inv-text strong { font-size: 14px; color: var(--text); display: block; margin-bottom: 2px; }
+    .inv-text span { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
     /* Goal cards — Facebook style */
     .goal-grid {
       display: grid;
@@ -441,8 +494,8 @@
       <div class="field">
         <label>Where should campaign traffic go?</label>
         <input type="url" id="landingPage" placeholder="https://clientsite.com" />
-        <div class="field-hint">The landing page URL for this campaign. You can update this anytime inside the platform.</div>
-        <div class="err" id="e-url">Please enter a valid URL starting with https://</div>
+        <div class="field-hint">Required. The landing page URL for this campaign. You can update this anytime inside the platform.</div>
+        <div class="err" id="e-url">A landing page URL is required — must start with https://</div>
       </div>
 
       <div class="form-nav">
@@ -494,6 +547,39 @@
         <div class="err" id="e-goal">Please select a campaign goal.</div>
       </div>
 
+      <div class="field" style="margin-top: 28px;">
+        <label>Where should this campaign run?</label>
+        <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">Choose the channels you want us to set up. You can add or remove channels later inside the platform.</div>
+        <div class="channel-grid" id="channelGrid">
+          <div class="channel-card" onclick="pickChannel(this)" data-channel="Connected TV (CTV)">
+            <div class="channel-icon">📺</div>
+            <div class="channel-name">Connected TV</div>
+            <div class="channel-desc">CTV streaming devices</div>
+          </div>
+          <div class="channel-card" onclick="pickChannel(this)" data-channel="Online Video">
+            <div class="channel-icon">🎬</div>
+            <div class="channel-name">Online Video</div>
+            <div class="channel-desc">Desktop & mobile video</div>
+          </div>
+          <div class="channel-card" onclick="pickChannel(this)" data-channel="Display">
+            <div class="channel-icon">🖥️</div>
+            <div class="channel-name">Display</div>
+            <div class="channel-desc">Banners across web & apps</div>
+          </div>
+          <div class="channel-card" onclick="pickChannel(this)" data-channel="Native">
+            <div class="channel-icon">📰</div>
+            <div class="channel-name">Native</div>
+            <div class="channel-desc">In-content placements</div>
+          </div>
+          <div class="channel-card" onclick="pickChannel(this)" data-channel="Audio">
+            <div class="channel-icon">🎧</div>
+            <div class="channel-name">Audio</div>
+            <div class="channel-desc">Podcasts & streaming</div>
+          </div>
+        </div>
+        <div class="err" id="e-channel">Please select at least one channel.</div>
+      </div>
+
       <div class="form-nav">
         <button class="btn-back" onclick="goBack(2)">← Back</button>
         <button class="btn-next" onclick="goNext(2)">
@@ -529,6 +615,34 @@
       </div>
 
       <div class="field">
+        <label>Inventory Preference</label>
+        <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">How would you like us to balance premium placements and broad reach?</div>
+        <div class="inv-group" id="invGroup">
+          <div class="inv-card sel" onclick="pickInv(this)" data-inv="Balanced">
+            <div class="inv-radio"></div>
+            <div class="inv-text">
+              <strong>Balanced <span style="font-size:11px; font-weight:400; color:var(--blue);">Recommended</span></strong>
+              <span>Mix of curated and broad inventory — best starting point for most campaigns</span>
+            </div>
+          </div>
+          <div class="inv-card" onclick="pickInv(this)" data-inv="Premium">
+            <div class="inv-radio"></div>
+            <div class="inv-text">
+              <strong>Premium</strong>
+              <span>Curated, brand-safe placements — higher CPMs, more control over where ads appear</span>
+            </div>
+          </div>
+          <div class="inv-card" onclick="pickInv(this)" data-inv="Scale">
+            <div class="inv-radio"></div>
+            <div class="inv-text">
+              <strong>Scale</strong>
+              <span>Broad reach and efficiency — lower CPMs, best for performance and volume</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
         <label>Where should this campaign reach people?</label>
         <div class="geo-wrap" id="geoWrap" onclick="document.getElementById('geoInput').focus()">
           <input
@@ -554,6 +668,17 @@
       </div>
 
       <div class="field">
+        <label>Retargeting Setup <span class="label-sub">(optional)</span></label>
+        <div class="inv-card" id="retargetCard" onclick="toggleRetarget(this)" style="max-width:100%;">
+          <div class="inv-radio" id="retargetRadio"></div>
+          <div class="inv-text">
+            <strong>Set this client up for future retargeting</strong>
+            <span>We'll have a tracking pixel ready for you inside the platform — no extra configuration needed now</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
         <label>Anything else we should know? <span class="label-sub">(optional)</span></label>
         <textarea id="notes" placeholder="Audience details, timing preferences, creative notes — anything helpful for setting up this campaign..."></textarea>
       </div>
@@ -572,7 +697,7 @@
 
       <div style="margin-bottom: 24px;">
         <div style="font-family:'DM Serif Display',serif; font-size:22px; margin-bottom:6px;">Looks good — review before submitting</div>
-        <div style="font-size:14px; color:var(--muted); line-height:1.6;">We'll prepare your campaign based on these inputs. Once it's ready, you'll have full access inside the platform to refine targeting, upload first-party data, add creative, and manage everything directly.</div>
+        <div style="font-size:14px; color:var(--muted); line-height:1.6;">We'll prepare your campaigns by channel and inventory type based on your selections. Once they're ready, you'll have full access inside the platform to refine targeting, upload first-party data, add creative, and manage everything directly.</div>
       </div>
 
       <div class="review-block" id="reviewBlock"></div>
@@ -604,7 +729,7 @@
       <strong style="font-size:15px; margin-bottom: 12px; display:block;">⚡ While you wait — get your creative assets ready</strong>
       <div class="next-item" style="font-size:14px; color: var(--text); margin-bottom: 14px;"><div class="next-dot"></div><span>We're configuring your campaign now. Once we approve the setup — typically within 1 business day — you'll be prompted to upload your creative directly inside the platform.</span></div>
       <div class="next-item" style="font-size:14px; color: var(--text); margin-bottom: 14px;"><div class="next-dot"></div><span><strong>Do not upload assets yet</strong> — uploading before approval creates duplication. Use this time to get everything prepared and sized correctly.</span></div>
-      <div class="next-item" style="font-size:14px; color: var(--text); margin-bottom:0;"><div class="next-dot"></div><span>Review the creative requirements so you're ready to go the moment we approve: <a href="CREATIVE_SPECS_URL_HERE" style="color:var(--blue); font-weight:600; text-decoration:underline;" target="_blank">View Creative Specifications →</a></span></div>
+      <div class="next-item" style="font-size:14px; color: var(--text); margin-bottom:0;"><div class="next-dot"></div><span>Review the creative requirements so you're ready to go the moment we approve: <a href="https://helpdesk.getdspconnect.com/en/articles/14459525-dsp-connect-creative-specifications" style="color:var(--blue); font-weight:600; text-decoration:underline;" target="_blank">View Creative Specifications →</a></span></div>
     </div>
 
     <div class="what-next">
@@ -656,7 +781,7 @@
     4: {
       num: 'Step 4 of 4',
       title: 'Review & confirm',
-      desc: "Take a final look before you submit. Once submitted, we'll prepare the campaign and you'll be notified when it's live and ready to manage.",
+      desc: "Take a final look before you submit. Once submitted, we'll prepare your campaigns by channel and inventory type — you'll have full access inside the platform to refine, upload creative, and manage everything directly.",
       tips: [
         "Nothing is locked in — all settings are editable inside the platform after launch.",
         "Creative assets and first-party data are uploaded directly in your dashboard.",
@@ -678,7 +803,28 @@
   }
 
   // ─── State ───────────────────────────────────────────────
-  let goal = '', geos = [];
+  let goal = '', geos = [], channels = [], inventory = 'Balanced', retargeting = false;
+
+  // ── Channel multi-select ──
+  function pickChannel(el) {
+    el.classList.toggle('sel');
+    channels = [...document.querySelectorAll('#channelGrid .channel-card.sel')].map(c => c.dataset.channel);
+  }
+
+  // ── Inventory single select ──
+  function pickInv(el) {
+    document.querySelectorAll('#invGroup .inv-card').forEach(c => c.classList.remove('sel'));
+    el.classList.add('sel');
+    inventory = el.dataset.inv;
+  }
+
+  // ── Retargeting toggle ──
+  function toggleRetarget(el) {
+    retargeting = !retargeting;
+    el.classList.toggle('sel', retargeting);
+    document.getElementById('retargetRadio').style.background = retargeting ? 'var(--blue)' : '';
+    document.getElementById('retargetRadio').style.borderColor = retargeting ? 'var(--blue)' : '';
+  }
 
   // ─── Geo ─────────────────────────────────────────────────
   function handleGeoKey(e) {
@@ -749,11 +895,12 @@
       he('e-agency'); he('e-name'); he('e-url');
       if (!agency) { se('e-agency'); bi('agencyName', true); } else bi('agencyName', false);
       if (!name)   { se('e-name');   bi('clientName', true); } else bi('clientName', false);
-      if (url && !url.startsWith('http')) { se('e-url'); bi('landingPage', true); } else bi('landingPage', false);
+      if (!url || !url.startsWith('http')) { se('e-url'); bi('landingPage', true); } else bi('landingPage', false);
     }
     if (s === 2) {
-      he('e-goal');
-      if (!goal) { se('e-goal'); ok = false; }
+      he('e-goal'); he('e-channel');
+      if (!goal)            { se('e-goal');    ok = false; }
+      if (!channels.length) { se('e-channel'); ok = false; }
     }
     if (s === 3) {
       const bud = parseFloat(g('budget').value);
@@ -775,6 +922,9 @@
       ['Goal',         goal],
       ['Budget',       '$' + Number(g('budget').value).toLocaleString() + ' / mo'],
       ['Optimization', g('optGoal').value],
+      ['Channels',     channels.join(', ')],
+      ['Inventory',    inventory],
+      ['Retargeting',  retargeting ? 'Setup requested' : 'Not requested'],
       ['Targeting',    geos.join(' · ')],
       ['Notes',        g('notes').value.trim() || '—'],
     ];
@@ -783,7 +933,7 @@
 
   function renderReview(boxId, editable) {
     const rows = buildReview();
-    const stepMap = { 'Agency': 1, 'Client': 1, 'Landing Page': 1, 'Goal': 2, 'Budget': 3, 'Optimization': 3, 'Targeting': 3, 'Notes': 3 };
+    const stepMap = { 'Agency': 1, 'Client': 1, 'Landing Page': 1, 'Goal': 2, 'Channels': 2, 'Inventory': 3, 'Retargeting': 3, 'Budget': 3, 'Optimization': 3, 'Targeting': 3, 'Notes': 3 };
     g(boxId).innerHTML = rows.map(([k, v]) =>
       `<div class="review-row">
         <span class="review-key">${k}</span>
@@ -828,10 +978,10 @@
 
     // ── Slack notification ──────────────────────────────────
     // Paste your Slack Incoming Webhook URL below to activate
-    const SLACK_WEBHOOK = 'YOUR_SLACK_WEBHOOK_URL_HERE';
+    const SLACK_WEBHOOK = 'https://hooks.slack.com/services/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';
     // Get one at: api.slack.com/apps → Incoming Webhooks → Add to Channel
 
-    if (SLACK_WEBHOOK !== 'YOUR_SLACK_WEBHOOK_URL_HERE') {
+    if (SLACK_WEBHOOK) {
       const rows = buildReview ? buildReview() : [];
       const fields = rows.map(([k, v]) => ({ type: 'mrkdwn', text: `*${k}:*\n${v}` }));
       const slackPayload = {
@@ -868,7 +1018,10 @@
     g('budget').value = '';
     g('optGoal').value = '';
     g('notes').value = '';
-    goal = ''; geos = [];
+    goal = ''; geos = []; channels = []; inventory = 'Balanced'; retargeting = false;
+    document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('sel'));
+    document.querySelectorAll('#invGroup .inv-card').forEach((c,i) => { c.classList.toggle('sel', i===0); });
+    document.getElementById('retargetCard').classList.remove('sel');
     renderGeos();
     document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('sel'));
     document.querySelectorAll('.err').forEach(e => e.classList.remove('show'));
