@@ -28,7 +28,6 @@
     overflow: hidden;
   }
 
-  /* Progress bar */
   .progress-bar {
     height: 4px;
     background: #e8edf5;
@@ -44,7 +43,6 @@
     padding: 40px 40px 36px;
   }
 
-  /* Step counter */
   .step-counter {
     font-size: 12px;
     font-weight: 600;
@@ -69,7 +67,6 @@
     line-height: 1.5;
   }
 
-  /* Options */
   .options {
     display: flex;
     flex-direction: column;
@@ -147,7 +144,6 @@
     font-weight: 400;
   }
 
-  /* Button */
   .btn {
     width: 100%;
     padding: 14px;
@@ -177,11 +173,9 @@
 
   .btn-arrow { font-size: 18px; line-height: 1; }
 
-  /* Screen transitions */
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* Result screen */
   .result-icon {
     width: 56px;
     height: 56px;
@@ -369,7 +363,7 @@
     <div class="screen" id="screen-3">
       <div class="step-counter">Step 3 of 3</div>
       <h2 class="question">What's your primary goal right now?</h2>
-      <p class="question-sub">Last one — then we'll get you straight into the platform.</p>
+      <p class="question-sub">Last one — then we'll take you to a quick campaign setup so we can configure your DSP Connect account the right way.</p>
       <div class="options" id="opts-3">
         <label class="option" data-val="revenue">
           <div class="option-radio"><div class="option-radio-dot"></div></div>
@@ -416,21 +410,21 @@
       <div class="result-steps">
         <div class="result-step">
           <div class="step-num">1</div>
-          <div class="step-text"><strong>Interactive platform tour</strong>The walkthrough starts automatically — it'll highlight each section and explain what it does as you go.</div>
+          <div class="step-text"><strong>Quick client campaign setup</strong>Tell us about your first client in 60 seconds. We'll configure your DSP Connect account around it so everything is ready when you log in.</div>
         </div>
         <div class="result-step">
           <div class="step-num">2</div>
-          <div class="step-text"><strong>Fund your account</strong>Start with any amount. No minimum. You control every dollar.</div>
+          <div class="step-text"><strong>Interactive platform tour</strong>The walkthrough starts automatically — it'll highlight each section and explain what it does as you go.</div>
         </div>
         <div class="result-step">
           <div class="step-num">3</div>
-          <div class="step-text"><strong>Launch your first campaign</strong>We'll walk you through it step by step. Your help desk has everything you need, and our team is one message away.</div>
+          <div class="step-text"><strong>Verify, adjust, and fund to activate</strong>Review what we've built, make any changes you need, then fund your account to go live. Your help desk has everything you need and our team is one message away.</div>
         </div>
       </div>
       <button class="btn" onclick="goToDashboard('A')">
-        Enter the platform <span class="btn-arrow">→</span>
+        Continue to campaign setup <span class="btn-arrow">→</span>
       </button>
-      <p class="disclaimer">Your setup path has been saved. The platform walkthrough will start automatically when you log in.</p>
+      <p class="disclaimer">Your setup path has been saved. Next, you'll complete a quick client campaign setup so we can configure your DSP Connect account before you log in.</p>
     </div>
 
     <!-- Result: Track B — Experienced -->
@@ -444,21 +438,21 @@
       <div class="result-steps">
         <div class="result-step">
           <div class="step-num">1</div>
-          <div class="step-text"><strong>Quick platform orientation</strong>A fast walkthrough focused on what's different about DSP Connect — not the fundamentals you already know.</div>
+          <div class="step-text"><strong>Quick client campaign setup</strong>Tell us about your first client in 60 seconds. We'll configure your account around it so you can move straight to execution.</div>
         </div>
         <div class="result-step">
           <div class="step-num">2</div>
-          <div class="step-text"><strong>Fund and launch</strong>Set up your first campaign. The platform will show your estimated partner revenue in real time as you configure spend.</div>
+          <div class="step-text"><strong>Verify and fund to activate</strong>Review what we've built, make any adjustments, then fund your account. Partner revenue starts from dollar one.</div>
         </div>
         <div class="result-step">
           <div class="step-num">3</div>
-          <div class="step-text"><strong>Scale what works</strong>Once your first campaign is live, we'll check in with performance data and partner revenue tracking.</div>
+          <div class="step-text"><strong>Scale what works</strong>Once your first campaign is live, performance data and partner revenue tracking are available in real time.</div>
         </div>
       </div>
       <button class="btn" onclick="goToDashboard('B')">
-        Enter the platform <span class="btn-arrow">→</span>
+        Continue to campaign setup <span class="btn-arrow">→</span>
       </button>
-      <p class="disclaimer">Your setup path has been saved. The platform walkthrough will start automatically when you log in.</p>
+      <p class="disclaimer">Your setup path has been saved. Next, you'll complete a quick client setup so we can configure your Fast-Launch Track inside DSP Connect before you log in.</p>
     </div>
 
     <!-- Result: Track C — Ready to switch -->
@@ -472,7 +466,7 @@
       <div class="result-steps">
         <div class="result-step">
           <div class="step-num">1</div>
-          <div class="step-text"><strong>Migration-focused walkthrough</strong>The platform tour highlights what's different from the DSP you're coming from and how to replicate your current setup.</div>
+          <div class="step-text"><strong>Quick client campaign setup</strong>Tell us about your first client in 60 seconds. We'll configure your Migration Track account around your existing workflow.</div>
         </div>
         <div class="result-step">
           <div class="step-num">2</div>
@@ -480,13 +474,13 @@
         </div>
         <div class="result-step">
           <div class="step-num">3</div>
-          <div class="step-text"><strong>Launch and earn from day one</strong>Your partner revenue starts immediately. No ramp period, no threshold to hit first.</div>
+          <div class="step-text"><strong>Verify, adjust, and fund to activate</strong>Review your setup, make any changes, then fund to go live. Partner revenue starts immediately — no ramp period.</div>
         </div>
       </div>
       <button class="btn" onclick="goToDashboard('C')">
-        Enter the platform <span class="btn-arrow">→</span>
+        Continue to campaign setup <span class="btn-arrow">→</span>
       </button>
-      <p class="disclaimer">Your setup path has been saved. A team member may reach out to offer migration support.</p>
+      <p class="disclaimer">Your setup path has been saved. Next, you'll complete a quick client setup so we can configure your Migration Track inside DSP Connect before you log in. A team member may reach out to offer migration support.</p>
     </div>
 
   </div>
@@ -495,7 +489,6 @@
 <script>
   var answers = { q1: null, q2: null, q3: null };
 
-  // Wire up option clicks
   [1,2,3].forEach(function(q) {
     var opts = document.querySelectorAll('#opts-' + q + ' .option');
     opts.forEach(function(opt) {
@@ -517,11 +510,8 @@
   }
 
   function getTrack() {
-    // Track C: wants to switch DSP — highest priority
     if (answers.q3 === 'switch') return 'C';
-    // Track A: new to programmatic
     if (answers.q1 === 'new') return 'A';
-    // Track B: experienced
     return 'B';
   }
 
@@ -532,20 +522,15 @@
     document.getElementById('progressFill').style.width = '100%';
 
     // ── Fire your tracking here ──────────────────────────────
-    // Replace with your actual user ID source and analytics calls.
-    //
-    // Example — push to dataLayer (Google Tag Manager):
     // window.dataLayer = window.dataLayer || [];
     // window.dataLayer.push({
     //   event: 'dsp_onboarding_complete',
-    //   user_id: YOUR_USER_ID,
     //   track: track,
     //   q1_programmatic: answers.q1,
     //   q2_role: answers.q2,
     //   q3_goal: answers.q3
     // });
     //
-    // Example — Intercom custom attributes:
     // window.Intercom('update', {
     //   onboarding_track: track,
     //   programmatic_experience: answers.q1,
@@ -563,10 +548,12 @@
       inhouse:     'brand_inhouse'
     };
     var role = roleMap[answers.q2] || 'unknown';
-    var url = 'https://dsp.getdspconnect.com'
-      + '?utm_campaign=onboarding'
-      + '&utm_content=track_' + track.toLowerCase()
-      + '&utm_term=' + role;
+
+    // Route to Launch Client wizard with track and role as params
+    var url = 'https://portal.getdspconnect.com/launch-client.html'
+      + '?onboarding_track=' + encodeURIComponent(track)
+      + '&role=' + encodeURIComponent(role);
+
     window.location.href = url;
   }
 </script>
