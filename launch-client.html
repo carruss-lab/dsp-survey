@@ -745,6 +745,14 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
       Set Up Another Client
     </button>
+
+    <div style="text-align:center; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+      <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Ready to log into your dashboard?</p>
+      <a href="https://dsp.getdspconnect.com/auth/login" target="_blank" style="display:inline-flex; align-items:center; gap:8px; background:var(--blue); color:#fff; font-family:Inter,sans-serif; font-size:15px; font-weight:600; padding:12px 28px; text-decoration:none; transition:background 0.15s;">
+        Go to Your Dashboard
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -975,6 +983,65 @@
 
     // Render success summary
     renderReview('sumBox', false);
+
+    // ── HubSpot — Create Contact + Deal ─────────────────────
+    const portalId       = '43907644';
+    const contactFormId  = 'edb5d62e-4ade-4e06-b542-08de6517beb5';
+    const dealFormId     = 'bdc403c7-5674-496e-b26f-b45757538416';
+    const hsBase         = 'https://api-na2.hsforms.com/submissions/v3/integration/submit/' + portalId + '/';
+
+    const agency  = g('agencyName').value.trim();
+    const client  = g('clientName').value.trim();
+    const budget  = Number(g('budget').value);
+    const lp      = g('landingPage').value.trim();
+    const notes   = g('notes').value.trim();
+    const track   = new URLSearchParams(window.location.search).get('onboarding_track') || '';
+    const role    = new URLSearchParams(window.location.search).get('role') || '';
+    const pageCtx = { pageUri: window.location.href, pageName: 'DSP Connect — Campaign Intake' };
+
+    const contactPayload = {
+      fields: [
+        { name: 'company',  value: agency },
+        { name: 'jobtitle', value: role.replace(/_/g, ' ') },
+      ].filter(f => f.value),
+      context: pageCtx
+    };
+
+    const dealPayload = {
+      fields: [
+        { name: 'dealname',    value: client + ' — ' + goal },
+        { name: 'amount',      value: String(budget) },
+        { name: 'description', value: [
+            'Agency: '      + agency,
+            'Goal: '        + goal,
+            'Channels: '    + channels.join(', '),
+            'Inventory: '   + inventory,
+            'Targeting: '   + geos.join(', '),
+            'Optimization: '+ g('optGoal').value,
+            'Landing Page: '+ lp,
+            'Track: '       + track,
+            'Retargeting: ' + (retargeting ? 'Yes' : 'No'),
+            notes ? 'Notes: ' + notes : ''
+          ].filter(Boolean).join(' | ')
+        },
+      ].filter(f => f.value),
+      context: pageCtx
+    };
+
+    try {
+      await Promise.allSettled([
+        fetch(hsBase + contactFormId, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(contactPayload)
+        }),
+        fetch(hsBase + dealFormId, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dealPayload)
+        })
+      ]);
+    } catch(e) { console.warn('HubSpot submission error:', e); }
 
     // ── Slack notification ──────────────────────────────────
     // Paste your Slack Incoming Webhook URL below to activate
