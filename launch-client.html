@@ -23,13 +23,19 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background: #fff;
       color: var(--text);
       font-family: Inter, sans-serif;
       font-size: 16px;
-      min-height: 100vh;
-      padding: 0 0 80px;
+      min-height: 100%;
+      padding: 0;
     }
 
     /* ── Step header bar ── */
