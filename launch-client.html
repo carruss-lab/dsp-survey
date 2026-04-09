@@ -560,40 +560,69 @@ async function doSubmit(){
   renderReview('sumBox',false);
   var emailEl=g('sucEmail'); if(emailEl)emailEl.textContent=g('contactEmail').value.trim();
 
-  var portalId='43907644', contactFormId='edb5d62e-4ade-4e06-b542-08de6517beb5', dealFormId='bdc403c7-5674-496e-b26f-b45757538416';
-  var hsBase='https://api-na2.hsforms.com/submissions/v3/integration/submit/'+portalId+'/';
+  var portalId='43907644';
+  var contactFormId='edb5d62e-4ade-4e06-b542-08de6517beb5';
+  // HubSpot Forms API — works for all regions, no -na2 prefix needed
+  var hsUrl='https://api.hsforms.com/submissions/v3/integration/submit/'+portalId+'/'+contactFormId;
   var params=new URLSearchParams(window.location.search);
   var track=params.get('onboarding_track')||'B', role=params.get('role')||'unknown';
-  var fields=[
-    {name:'firstname',value:g('contactName').value.trim().split(' ')[0]},
-    {name:'lastname',value:g('contactName').value.trim().split(' ').slice(1).join(' ')},
-    {name:'email',value:g('contactEmail').value.trim()},
-    {name:'company',value:g('agencyName').value.trim()},
-    {name:'advertiser_name',value:g('clientName').value.trim()},
-    {name:'campaign_url',value:g('landingPage').value.trim()},
-    {name:'campaign_start_date',value:g('startDate').value},
-    {name:'campaign_end_date',value:g('endDate').value||'Open-ended'},
-    {name:'campaign_goal',value:goal},
-    {name:'campaign_kpi',value:g('kpi').value},
-    {name:'campaign_channels',value:channels.join(', ')},
-    {name:'campaign_creative_type',value:creativeTypes.join(', ')},
-    {name:'campaign_traffic_type',value:trafficTypes.join(', ')},
-    {name:'campaign_device_type',value:deviceTypes.join(', ')},
-    {name:'campaign_budget',value:g('budget').value},
-    {name:'campaign_optimization',value:g('optGoal').value},
-    {name:'campaign_inventory',value:inventory},
-    {name:'campaign_geo',value:geos.join(', ')},
-    {name:'campaign_frequency_cap',value:g('freqCap').value},
-    {name:'campaign_retargeting',value:retargeting?'Yes':'No'},
-    {name:'campaign_first_party_data',value:g('firstParty').value},
-    {name:'campaign_notes',value:g('notes').value.trim()},
-    {name:'onboarding_track',value:track},
-    {name:'agency_role',value:role},
-  ];
+
+  // Build campaign summary as a single message field so no custom properties needed in HubSpot
+  var campaignSummary = [
+    'CLIENT: '+g('clientName').value.trim(),
+    'LANDING PAGE: '+g('landingPage').value.trim(),
+    'START: '+g('startDate').value+(g('endDate').value ? ' | END: '+g('endDate').value : ''),
+    'GOAL: '+goal,
+    'KPI: '+g('kpi').value,
+    'CHANNELS: '+channels.join(', '),
+    'CREATIVE TYPE: '+creativeTypes.join(', '),
+    'TRAFFIC: '+trafficTypes.join(', '),
+    'DEVICES: '+deviceTypes.join(', '),
+    'BUDGET: $'+Number(g('budget').value).toLocaleString(),
+    'OPTIMIZATION: '+g('optGoal').value,
+    'INVENTORY: '+inventory,
+    'GEO: '+geos.join(', '),
+    'FREQUENCY CAP: '+g('freqCap').value,
+    'RETARGETING: '+(retargeting?'Yes':'No'),
+    '1ST PARTY DATA: '+g('firstParty').value,
+    'TRACK: '+track+' | ROLE: '+role,
+    g('notes').value.trim() ? 'NOTES: '+g('notes').value.trim() : '',
+  ].filter(Boolean).join('\n');
+
+  var payload = {
+    fields: [
+      {name:'firstname', value:g('contactName').value.trim().split(' ')[0]},
+      {name:'lastname',  value:g('contactName').value.trim().split(' ').slice(1).join(' ')||'-'},
+      {name:'email',     value:g('contactEmail').value.trim()},
+      {name:'company',   value:g('agencyName').value.trim()},
+      {name:'message',   value:campaignSummary},
+    ],
+    context: {
+      pageUri: window.location.href,
+      pageName: 'DSP Connect — Campaign Setup Wizard',
+    },
+    legalConsentOptions: {
+      consent: {
+        consentToProcess: true,
+        text: 'I agree to allow DSP Connect to store and process my personal data.',
+        communications: [{value:true, subscriptionTypeId:999, text:'Campaign setup submission'}],
+      }
+    }
+  };
+
   try {
-    await fetch(hsBase+contactFormId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:fields})});
-    await fetch(hsBase+dealFormId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:[{name:'company',value:g('agencyName').value.trim()},{name:'dealname',value:g('agencyName').value.trim()+' — '+g('clientName').value.trim()},{name:'amount',value:g('budget').value},{name:'campaign_goal',value:goal},{name:'campaign_channels',value:channels.join(', ')},{name:'onboarding_track',value:track},{name:'closedate',value:g('startDate').value}]})});
-  } catch(e){ console.warn('HubSpot error:',e); }
+    var res = await fetch(hsUrl, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      var err = await res.json().catch(function(){return {};});
+      console.error('HubSpot error', res.status, err);
+    }
+  } catch(e){
+    console.warn('HubSpot network error:', e);
+  }
 
   g('mainLayout').style.display='none'; g('stepBar').style.display='none'; g('successView').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
