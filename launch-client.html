@@ -356,8 +356,6 @@ select:focus { border-color: var(--blue); }
         <textarea id="notes" placeholder="Anything helpful for routing, setup, timing, internal stakeholders, advertiser structure, or support needs..."></textarea>
       </div>
 
-      <div class="inline-note" id="nextStepPreview"></div>
-
       <div class="form-nav">
         <button class="btn-back" onclick="goBack(3)">Back</button>
         <button class="btn-next" onclick="goNext(3)">Review <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
@@ -382,7 +380,7 @@ select:focus { border-color: var(--blue); }
   <div class="suc-wrap">
     <div class="suc-check"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
     <h2 class="suc-title">Onboarding submitted.</h2>
-    <p class="suc-sub">We received your onboarding request and sent the next-step recommendation to <strong id="sucEmail"></strong>. Based on your answers, your best next step is one of two actions: create your DSP Connect account or book your onboarding kickoff.</p>
+    <p class="suc-sub">We received your onboarding request and sent next-step guidance to <strong id="sucEmail"></strong>. Based on your answers, your next step is either direct signup, onboarding kickoff, or a return to the homepage sales agent for additional questions.</p>
     <div class="sum-box" id="sumBox"></div>
     <div class="next-box">
       <strong>Your next step</strong>
@@ -391,8 +389,9 @@ select:focus { border-color: var(--blue); }
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
       <button class="btn-next" id="signupNowBtn" style="display:none;" onclick="window.open(SIGNUP_URL,'_blank','noopener,noreferrer')">Go to DSP Connect Signup</button>
       <button class="btn-next" id="kickoffBtn" style="display:none;" onclick="window.open(KICKOFF_URL,'_blank','noopener,noreferrer')">Book Onboarding Kickoff</button>
+      <button class="btn-next" id="salesAgentBtn" style="display:none;" onclick="window.open(HOMEPAGE_URL,'_blank','noopener,noreferrer')">Go to DSP Connect Homepage</button>
     </div>
-    <div class="inline-note" style="margin-top:18px; margin-bottom:20px;">If you still have questions before kickoff, use the sales agent on the DSP Connect homepage first. That is the best place to get answers and confirm fit before booking time.</div>
+    <div class="inline-note" id="routeSupportNote" style="margin-top:18px; margin-bottom:20px;"></div>
     <button class="btn-another" style="margin-top:16px;" onclick="doReset()">Start Another Submission</button>
   </div>
 </div>
@@ -407,7 +406,7 @@ const HUBSPOT_FORM_OPTIONS = {
 };
 const SIGNUP_URL = 'https://dsp.getdspconnect.com/auth/signup';
 const KICKOFF_URL = 'https://calendly.com/carmichaelruss/dsp-connect-onboarding';
-const HOMEPAGE_URL = '/';
+const HOMEPAGE_URL = 'https://getdspconnect.com';
 
 const state = {
   accountType: '',
@@ -456,7 +455,7 @@ function pickSingle(el, key){
   el.classList.add('sel');
   state[key] = el.dataset.val;
   if(key === 'accountType') syncAccountTypeUI();
-  if(key === 'supportPreference') renderNextStepPreview();
+
 }
 
 function toggleMulti(el, key){
@@ -481,10 +480,11 @@ function getRecommendation(){
       code: 'signup_now',
       title: 'Create your DSP Connect account now',
       bullets: [
-        'Your answers indicate you are ready for self-serve signup.',
+        'You selected self-serve signup as your next step.',
         'Create your DSP Connect account now to keep onboarding moving.',
-        'If questions come up before kickoff, use the sales agent on the homepage first.'
-      ]
+        'If questions come up later, use the sales agent on the homepage for quick answers.'
+      ],
+      supportNote: 'Direct signup is your best next step based on what you selected.'
     };
   }
   if(pref === 'Guided onboarding') {
@@ -492,26 +492,23 @@ function getRecommendation(){
       code: 'guided',
       title: 'Book your DSP Connect onboarding kickoff',
       bullets: [
-        'Your answers indicate you should start with a guided kickoff.',
+        'You selected guided onboarding as your next step.',
         'Book onboarding so your team can align on setup and next steps.',
-        'If you still have questions first, use the sales agent on the homepage before booking.'
-      ]
+        'If a few questions remain before booking, use the sales agent on the homepage first.'
+      ],
+      supportNote: 'Kickoff is the right next step when you want guided onboarding.'
     };
   }
   return {
-    code: 'guided',
-    title: 'Use the sales agent first, then book kickoff if needed',
+    code: 'sales_agent',
+    title: 'Go back to the DSP Connect homepage sales agent',
     bullets: [
-      'You are not ready for direct signup yet.',
-      'Use the sales agent on the homepage to get questions answered and confirm fit.',
-      'Once qualified, the only next action should be booking kickoff.'
-    ]
+      'You indicated you are not ready yet or need more information first.',
+      'Go back to the DSP Connect homepage and use the sales agent to get answers and confirm fit.',
+      'Once your questions are answered, the next step should be either signup or onboarding kickoff.'
+    ],
+    supportNote: 'Use the sales agent first when you still need answers before choosing signup or kickoff.'
   };
-}
-
-function renderNextStepPreview(){
-  const rec = getRecommendation();
-  gid('nextStepPreview').innerHTML = '<strong style="display:block;margin-bottom:6px;color:var(--text);">Current routing recommendation:</strong><span>' + esc(rec.title) + '</span>';
 }
 
 function validate(step){
@@ -540,7 +537,6 @@ function validate(step){
     const exp = value('experienceLevel'); showErr('e-experienceLevel', !exp); markInvalid('experienceLevel', !exp); ok = ok && !!exp;
     const time = value('launchTiming'); showErr('e-launchTiming', !time); markInvalid('launchTiming', !time); ok = ok && !!time;
     showErr('e-supportPreference', !state.supportPreference); ok = ok && !!state.supportPreference;
-    renderNextStepPreview();
   }
   return ok;
 }
@@ -603,7 +599,6 @@ function setStep(n){
   });
   if(n === 4) renderReview('reviewBlock', true);
   renderGuide(n);
-  renderNextStepPreview();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 function goNext(from){ if(validate(from)) setStep(from + 1); }
@@ -686,6 +681,8 @@ function renderRecommendedNext(){
   gid('recommendedNextStep').innerHTML = html;
   gid('signupNowBtn').style.display = rec.code === 'signup_now' ? 'inline-flex' : 'none';
   gid('kickoffBtn').style.display = rec.code === 'guided' ? 'inline-flex' : 'none';
+  gid('salesAgentBtn').style.display = rec.code === 'sales_agent' ? 'inline-flex' : 'none';
+  gid('routeSupportNote').textContent = rec.supportNote || '';
 }
 
 function doReset(){
@@ -702,7 +699,6 @@ function doReset(){
   gid('successView').style.display = 'none';
   gid('mainLayout').style.display = 'flex';
   gid('stepBar').style.display = 'flex';
-  renderNextStepPreview();
   setStep(1);
 }
 
