@@ -17,268 +17,53 @@
   --muted-lt: #9ca3af;
   --error: #dc2626;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
-body { background: #fff; color: var(--text); font-family: Inter, sans-serif; font-size: 16px; min-height: 100%; }
-a { color: var(--blue); }
-/* Step bar */
-.step-bar {
-  width: 100%; background: #fff; border-bottom: 1px solid var(--border);
-  padding: 0 40px; display: flex; align-items: stretch; height: 56px; overflow-x: auto;
-}
-.step-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 0 24px; border-right: 1px solid var(--border); cursor: default; flex-shrink: 0;
-}
-.step-item:first-child { padding-left: 0; }
-.step-num {
-  width: 24px; height: 24px; border-radius: 50%;
-  border: 1.5px solid var(--border); background: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; color: var(--muted-lt); flex-shrink: 0;
-  transition: all 0.25s;
-}
-.step-item.active .step-num, .step-item.done .step-num {
-  border-color: var(--blue); background: var(--blue); color: #fff;
-}
-.step-label {
-  font-size: 13px; font-weight: 500; color: var(--muted-lt);
-  white-space: nowrap; transition: color 0.2s;
-}
-.step-item.active .step-label { color: var(--text); font-weight: 600; }
-.step-item.done .step-label { color: var(--blue); }
-
-/* Layout */
-.layout { display: flex; min-height: calc(100vh - 56px); }
-.guide {
-  width: 280px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border);
-  padding: 40px 32px; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto;
-}
-.guide-step-num {
-  font-size: 11px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 2px; color: var(--blue); margin-bottom: 8px;
-}
-.guide-title {
-  font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400;
-  line-height: 1.25; margin-bottom: 14px;
-}
-.guide-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
-.guide-tips { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
-.guide-tip-label {
-  font-size: 11px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 1.5px; color: var(--muted-lt); margin-bottom: 12px;
-}
-.guide-tip {
-  display: flex; gap: 10px; margin-bottom: 14px;
-  font-size: 13px; color: var(--muted); line-height: 1.55;
-}
-.guide-tip-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--blue); flex-shrink: 0; margin-top: 6px;
-}
-.main { flex: 1; padding: 48px 52px; max-width: 760px; }
-.hero-note {
-  border: 1px solid var(--border); background: var(--surface);
-  padding: 18px 20px; margin-bottom: 26px;
-}
-.hero-note strong { display: block; font-size: 14px; margin-bottom: 8px; }
-.hero-note p { font-size: 13px; color: var(--muted); line-height: 1.6; }
-
-/* Steps */
-.step-panel { display: none; }
-.step-panel.active { display: block; animation: fadeIn 0.2s ease; }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Fields */
-.field { margin-bottom: 28px; }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-label {
-  display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px;
-}
-.label-sub { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 6px; }
-.field-hint { font-size: 12px; color: var(--muted-lt); margin-top: 6px; line-height: 1.55; }
-.section-label {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
-  color: var(--muted-lt); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
-}
-input[type="text"], input[type="url"], input[type="number"],
-input[type="email"], input[type="date"], textarea {
-  width: 100%; border: 1.5px solid var(--border); border-radius: 0; padding: 12px 14px;
-  font-family: Inter, sans-serif; font-size: 15px; color: var(--text); background: #fff;
-  outline: none; transition: border-color 0.2s;
-}
-input:focus, textarea:focus { border-color: var(--blue); }
-input::placeholder, textarea::placeholder { color: var(--muted-lt); }
-textarea { resize: vertical; min-height: 90px; }
-select {
-  width: 100%; border: 1.5px solid var(--border); border-radius: 0; padding: 12px 14px;
-  font-family: Inter, sans-serif; font-size: 15px; color: var(--text); background: #fff;
-  outline: none; transition: border-color 0.2s; appearance: none; -webkit-appearance: none;
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
-}
-select:focus { border-color: var(--blue); }
-
-/* Choices & toggles */
-.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.choice-card, .route-card {
-  border: 1.5px solid var(--border); background: #fff; padding: 16px 16px;
-  cursor: pointer; transition: all 0.15s; user-select: none;
-}
-.choice-card:hover, .route-card:hover { border-color: var(--blue); background: var(--blue-light); }
-.choice-card.sel, .route-card.sel { border-color: var(--blue); background: var(--blue-light); }
-.choice-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-.choice-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
-.toggle-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.toggle-card {
-  border: 1.5px solid var(--border); background: #fff;
-  padding: 10px 14px; cursor: pointer; transition: all 0.15s;
-  display: flex; align-items: center; gap: 8px; user-select: none;
-  font-size: 13px; font-weight: 500; color: var(--text);
-}
-.toggle-card:hover { border-color: var(--blue); background: var(--blue-light); }
-.toggle-card.sel { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
-
-/* Route cards */
-.route-group { display: flex; flex-direction: column; gap: 10px; }
-.route-card { display: flex; gap: 14px; align-items: flex-start; }
-.route-radio {
-  width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border);
-  flex-shrink: 0; margin-top: 2px;
-}
-.route-card.sel .route-radio {
-  border-color: var(--blue); background: var(--blue); box-shadow: inset 0 0 0 4px #fff;
-}
-
-/* Review & summary */
-.review-block, .sum-box { border: 1px solid var(--border); background: var(--surface); margin-bottom: 24px; }
-.review-section-head {
-  font-size: 11px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 1px; color: var(--muted);
-  padding: 10px 20px; background: #eef0f6;
-  border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
-}
-.review-row, .sum-row {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  padding: 12px 20px; border-bottom: 1px solid var(--border); gap: 24px;
-}
-.review-row:last-child, .sum-row:last-child { border-bottom: none; }
-.review-key, .sum-k {
-  font-size: 12px; font-weight: 600; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; max-width: 42%;
-}
-.review-val, .sum-v {
-  font-size: 14px; color: var(--text); text-align: right;
-  flex: 1; min-width: 0; overflow-wrap: anywhere; word-break: break-word;
-}
-
-/* Errors */
-.err { font-size: 12px; color: var(--error); margin-top: 6px; display: none; }
-.err.show { display: block; }
-.invalid { border-color: var(--error) !important; }
-
-/* Nav */
-.form-nav {
-  display: flex; justify-content: space-between; align-items: center;
-  padding-top: 32px; margin-top: 8px; border-top: 1px solid var(--border);
-}
-.btn-back {
-  background: none; border: 1.5px solid var(--border); color: var(--muted);
-  font-family: Inter, sans-serif; font-size: 14px; font-weight: 500;
-  padding: 10px 24px; cursor: pointer; transition: all 0.15s;
-}
-.btn-back:hover { border-color: var(--blue); color: var(--blue); }
-.btn-next, .btn-another {
-  background: var(--blue); border: 2px solid var(--blue); color: #fff;
-  font-family: Inter, sans-serif; font-size: 15px; font-weight: 600;
-  padding: 12px 28px; cursor: pointer; transition: all 0.15s;
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-}
-.btn-next:hover, .btn-another:hover { background: var(--blue-dark); border-color: var(--blue-dark); }
-.btn-next:disabled { opacity: 0.45; cursor: not-allowed; }
-
-/* Success */
-#successView { display: none; }
-.suc-wrap { padding: 60px 52px; max-width: 640px; }
-.suc-check {
-  width: 56px; height: 56px; border-radius: 50%;
-  background: var(--blue-light); border: 2px solid var(--blue);
-  display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
-}
-.suc-title {
-  font-family: 'DM Serif Display', serif; font-size: 32px;
-  font-weight: 400; margin-bottom: 10px;
-}
-.suc-sub {
-  font-size: 15px; color: var(--muted); line-height: 1.7;
-  margin-bottom: 26px; max-width: 560px;
-}
-.next-box {
-  border: 1px solid var(--border); background: var(--surface);
-  padding: 22px 24px; margin-bottom: 20px;
-}
-.next-box strong {
-  font-size: 14px; color: var(--text); display: block; margin-bottom: 14px;
-}
-.next-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  margin-bottom: 12px; font-size: 13px; color: var(--muted); line-height: 1.5;
-}
-.next-item:last-child { margin-bottom: 0; }
-.next-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--blue); flex-shrink: 0; margin-top: 6px;
-}
-.inline-note {
-  border: 1px solid var(--border); background: var(--surface);
-  padding: 14px 16px; font-size: 13px; color: var(--muted);
-  line-height: 1.6; margin-bottom: 20px;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .guide { display: none; }
-  .main { padding: 28px 18px 40px; max-width: 100%; }
-  .step-bar { padding: 0 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .step-item { padding: 0 14px; }
-  .step-label { font-size: 12px; }
-  .field-row, .choice-grid { grid-template-columns: 1fr; }
-  .form-nav { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
-  .form-nav .btn-back, .form-nav .btn-next { width: 100%; }
-  .review-row, .sum-row {
-    flex-direction: column; align-items: flex-start;
-    gap: 6px; padding: 12px 16px;
-  }
-  .review-key, .sum-k { max-width: 100%; }
-  .review-val, .sum-v { text-align: left; width: 100%; }
-  .suc-wrap { padding: 36px 20px 48px; }
-  .suc-title { font-size: 28px; }
-  #successView .btn-next, #successView .btn-another { width: 100%; }
-  #successActions {
-    display: flex !important;
-    flex-direction: column; align-items: stretch !important;
-  }
-}
-
-@media (max-width: 480px) {
-  body { font-size: 15px; }
-  .main { padding: 24px 16px 36px; }
-  input[type="text"], input[type="url"], input[type="number"],
-  input[type="email"], input[type="date"], textarea, select {
-    font-size: 16px; padding: 12px;
-  }
-  .toggle-card { width: 100%; justify-content: center; }
-  .step-bar { height: 52px; }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#fff;color:var(--text);font-family:Inter,sans-serif;font-size:16px;min-height:100%}
+a{color:var(--blue)}
+.hidden{display:none!important}
+.step-bar{width:100%;background:#fff;border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:stretch;height:56px;overflow-x:auto}
+.step-item{display:flex;align-items:center;gap:10px;padding:0 24px;border-right:1px solid var(--border);flex-shrink:0}
+.step-item:first-child{padding-left:0}
+.step-num{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--muted-lt);flex-shrink:0;transition:all .25s}
+.step-item.active .step-num,.step-item.done .step-num{border-color:var(--blue);background:var(--blue);color:#fff}
+.step-label{font-size:13px;font-weight:500;color:var(--muted-lt);white-space:nowrap;transition:color .2s}
+.step-item.active .step-label{color:var(--text);font-weight:600}
+.step-item.done .step-label{color:var(--blue)}
+.layout{display:flex;min-height:calc(100vh - 56px)}
+.guide{width:280px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:40px 32px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.guide-step-num{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--blue);margin-bottom:8px}
+.guide-title{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;line-height:1.25;margin-bottom:14px}
+.guide-desc{font-size:13px;color:var(--muted);line-height:1.7}
+.guide-tips{margin-top:28px;padding-top:24px;border-top:1px solid var(--border)}
+.guide-tip-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted-lt);margin-bottom:12px}
+.guide-tip{display:flex;gap:10px;margin-bottom:14px;font-size:13px;color:var(--muted);line-height:1.55}
+.guide-tip-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:6px}
+.main{flex:1;padding:48px 52px;max-width:760px}
+.hero-note{border:1px solid var(--border);background:var(--surface);padding:18px 20px;margin-bottom:26px}
+.hero-note strong{display:block;font-size:14px;margin-bottom:8px}.hero-note p{font-size:13px;color:var(--muted);line-height:1.6}
+.step-panel{display:none}.step-panel.active{display:block}
+.field{margin-bottom:28px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+label{display:block;font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px}
+.label-sub{font-size:12px;font-weight:400;color:var(--muted);margin-left:6px}
+.field-hint{font-size:12px;color:var(--muted-lt);margin-top:6px;line-height:1.55}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted-lt);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+input[type="text"],input[type="url"],input[type="number"],input[type="email"],textarea{width:100%;border:1.5px solid var(--border);padding:12px 14px;font-family:Inter,sans-serif;font-size:15px;color:var(--text);background:#fff;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--blue)}
+input::placeholder,textarea::placeholder{color:var(--muted-lt)}
+textarea{resize:vertical;min-height:90px}
+select{width:100%;border:1.5px solid var(--border);padding:12px 14px;font-family:Inter,sans-serif;font-size:15px;color:var(--text);background:#fff;outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice-card,.route-card{border:1.5px solid var(--border);background:#fff;padding:16px;cursor:pointer;transition:all .15s;user-select:none}.choice-card:hover,.route-card:hover{border-color:var(--blue);background:var(--blue-light)}.choice-card.sel,.route-card.sel{border-color:var(--blue);background:var(--blue-light)}
+.choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}.choice-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.toggle-grid{display:flex;flex-wrap:wrap;gap:8px}.toggle-card{border:1.5px solid var(--border);background:#fff;padding:10px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;user-select:none;font-size:13px;font-weight:500;color:var(--text)}.toggle-card:hover{border-color:var(--blue);background:var(--blue-light)}.toggle-card.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.route-group{display:flex;flex-direction:column;gap:10px}.route-card{display:flex;gap:14px;align-items:flex-start}.route-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:2px}.route-card.sel .route-radio{border-color:var(--blue);background:var(--blue);box-shadow:inset 0 0 0 4px #fff}
+.review-block,.sum-box{border:1px solid var(--border);background:var(--surface);margin-bottom:24px}.review-section-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:10px 20px;background:#eef0f6;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.review-row{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 20px;border-bottom:1px solid var(--border);gap:24px}.review-row:last-child{border-bottom:none}.review-key{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;max-width:42%}.review-val{font-size:14px;color:var(--text);text-align:right;flex:1;min-width:0;overflow-wrap:anywhere;word-break:break-word}
+.err{font-size:12px;color:var(--error);margin-top:6px;display:none}.err.show{display:block}.invalid{border-color:var(--error)!important}
+.form-nav{display:flex;justify-content:space-between;align-items:center;padding-top:32px;margin-top:8px;border-top:1px solid var(--border)}
+.btn-back{background:none;border:1.5px solid var(--border);color:var(--muted);font-family:Inter,sans-serif;font-size:14px;font-weight:500;padding:10px 24px;cursor:pointer}
+.btn-next,.btn-another{background:var(--blue);border:2px solid var(--blue);color:#fff;font-family:Inter,sans-serif;font-size:15px;font-weight:600;padding:12px 28px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px}
+#successView{display:none}.suc-wrap{padding:60px 52px;max-width:640px}.suc-check{width:56px;height:56px;border-radius:50%;background:var(--blue-light);border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;margin-bottom:24px}.suc-title{font-family:'DM Serif Display',serif;font-size:32px;font-weight:400;margin-bottom:10px}.suc-sub{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:26px;max-width:560px}.next-box{border:1px solid var(--border);background:var(--surface);padding:22px 24px;margin-bottom:20px}.next-box strong{font-size:14px;color:var(--text);display:block;margin-bottom:14px}.next-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;font-size:13px;color:var(--muted);line-height:1.5}.next-item:last-child{margin-bottom:0}.next-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:6px}.inline-note{border:1px solid var(--border);background:var(--surface);padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+@media (max-width:768px){.guide{display:none}.main{padding:28px 18px 40px;max-width:100%}.step-bar{padding:0 14px}.step-item{padding:0 14px}.step-label{font-size:12px}.field-row,.choice-grid{grid-template-columns:1fr}.form-nav{flex-direction:column-reverse;align-items:stretch;gap:10px}.form-nav .btn-back,.form-nav .btn-next{width:100%}.review-row{flex-direction:column;align-items:flex-start;gap:6px;padding:12px 16px}.review-key{max-width:100%}.review-val{text-align:left;width:100%}.suc-wrap{padding:36px 20px 48px}.suc-title{font-size:28px}}
 </style>
 </head>
 <body>
@@ -288,774 +73,105 @@ select:focus { border-color: var(--blue); }
   <div class="step-item" data-s="3"><div class="step-num">3</div><div class="step-label">Readiness</div></div>
   <div class="step-item" data-s="4"><div class="step-num">4</div><div class="step-label">Review</div></div>
 </div>
-
 <div class="layout" id="mainLayout">
-  <div class="guide" id="guidePanel"></div>
-
-  <div class="main">
-    <div class="hero-note">
-      <strong>Start here before signup.</strong>
-      <p>This form helps us route agencies and brands correctly. Based on your answers, your next step will be direct signup, onboarding kickoff, or a return to the homepage sales agent for more questions.</p>
+  <div class="guide" id="guidePanel">
+    <div class="guide-step-num">Step 1 of 4</div>
+    <div class="guide-title">Identify the account owner</div>
+    <div class="guide-desc">Start with who this account is for and who should receive next-step instructions.</div>
+    <div class="guide-tips">
+      <div class="guide-tip-label">Tips</div>
+      <div class="guide-tip"><div class="guide-tip-dot"></div><div>Choose Agency if you manage advertiser accounts for clients.</div></div>
+      <div class="guide-tip"><div class="guide-tip-dot"></div><div>Choose Brand if this account will be used by your internal marketing team.</div></div>
     </div>
-
-    <!-- Step 1 -->
+  </div>
+  <div class="main">
+    <div class="hero-note"><strong>Start here before signup.</strong><p>This form helps us route agencies and brands correctly. Based on your answers, your next step will be direct signup, onboarding kickoff, or a return to the homepage sales agent for more questions.</p></div>
     <div class="step-panel active" id="step1">
       <div class="section-label">Who is this account for?</div>
       <div class="field">
         <label>Account Type</label>
         <div class="choice-grid" id="accountTypeGrid">
-          <div class="choice-card" onclick="pickSingle(this,'accountType')" data-val="Agency">
-            <div class="choice-title">Agency</div>
-            <div class="choice-desc">You manage media for client advertisers and may need multiple advertiser accounts over time.</div>
-          </div>
-          <div class="choice-card" onclick="pickSingle(this,'accountType')" data-val="Brand">
-            <div class="choice-title">Brand</div>
-            <div class="choice-desc">You are buying media for your own company or internal marketing team.</div>
-          </div>
+          <div class="choice-card" onclick="pickSingle(this,'accountType')" data-val="Agency"><div class="choice-title">Agency</div><div class="choice-desc">You manage media for client advertisers and may need multiple advertiser accounts over time.</div></div>
+          <div class="choice-card" onclick="pickSingle(this,'accountType')" data-val="Brand"><div class="choice-title">Brand</div><div class="choice-desc">You are buying media for your own company or internal marketing team.</div></div>
         </div>
         <div class="err" id="e-accountType">Please choose Agency or Brand.</div>
       </div>
-
       <div class="section-label">Primary Contact</div>
       <div class="field-row" style="margin-bottom:28px;">
-        <div class="field" style="margin-bottom:0;">
-          <label>Your Name</label>
-          <input type="text" id="contactName" placeholder="First and last name" />
-          <div class="err" id="e-contactName">Please enter your name.</div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>Your Work Email</label>
-          <input type="email" id="contactEmail" placeholder="you@company.com" />
-          <div class="field-hint">We will send next-step instructions here.</div>
-          <div class="err" id="e-contactEmail">A valid work email is required.</div>
-        </div>
+        <div class="field" style="margin-bottom:0;"><label>Your Name</label><input type="text" id="contactName" placeholder="First and last name" /><div class="err" id="e-contactName">Please enter your name.</div></div>
+        <div class="field" style="margin-bottom:0;"><label>Your Work Email</label><input type="email" id="contactEmail" placeholder="you@company.com" /><div class="field-hint">We will send next-step instructions here.</div><div class="err" id="e-contactEmail">A valid work email is required.</div></div>
       </div>
-
       <div class="field-row">
-        <div class="field" style="margin-bottom:0;">
-          <label>Company Name</label>
-          <input type="text" id="companyName" placeholder="e.g. Horizon Media Group" />
-          <div class="err" id="e-companyName">Please enter your company name.</div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>Website</label>
-          <input type="url" id="website" placeholder="https://yourcompany.com" />
-          <div class="err" id="e-website">A valid URL starting with https:// is required.</div>
-        </div>
+        <div class="field" style="margin-bottom:0;"><label>Company Name</label><input type="text" id="companyName" placeholder="e.g. Horizon Media Group" /><div class="err" id="e-companyName">Please enter your company name.</div></div>
+        <div class="field" style="margin-bottom:0;"><label>Website</label><input type="url" id="website" placeholder="https://yourcompany.com" /><div class="err" id="e-website">A valid URL starting with https:// is required.</div></div>
       </div>
-
-      <div class="form-nav">
-        <div></div>
-        <button class="btn-next" onclick="goNext(1)">
-          Continue
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
+      <div class="form-nav"><div></div><button class="btn-next" onclick="goNext(1)">Continue</button></div>
     </div>
-
-    <!-- Step 2 -->
     <div class="step-panel" id="step2">
       <div class="section-label">Business Details</div>
       <div class="field-row">
-        <div class="field" style="margin-bottom:0;">
-          <label id="companyRoleLabel">Agency Type</label>
-          <select id="companyRole">
-            <option value="">Select one...</option>
-            <option value="Independent media buying agency">Independent media buying agency</option>
-            <option value="Full-service agency">Full-service agency</option>
-            <option value="Trading desk / performance team">Trading desk / performance team</option>
-            <option value="In-house marketing team">In-house marketing team</option>
-            <option value="Brand marketing team">Brand marketing team</option>
-            <option value="Agency-supported brand team">Agency-supported brand team</option>
-          </select>
-          <div class="err" id="e-companyRole">Please select the best fit.</div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label id="volumeLabel">Estimated Monthly Media Volume</label>
-          <select id="monthlyVolume">
-            <option value="">Select one...</option>
-            <option value="Under $10,000">Under $10,000</option>
-            <option value="$10,000 - $50,000">$10,000 - $50,000</option>
-            <option value="$50,000 - $250,000">$50,000 - $250,000</option>
-            <option value="$250,000 - $1M">$250,000 - $1M</option>
-            <option value="$1M+">$1M+</option>
-          </select>
-          <div class="err" id="e-monthlyVolume">Please select an estimated monthly volume.</div>
-        </div>
+        <div class="field" style="margin-bottom:0;"><label id="companyRoleLabel">Agency Type</label><select id="companyRole"><option value="">Select one...</option><option value="Independent media buying agency">Independent media buying agency</option><option value="Full-service agency">Full-service agency</option><option value="Trading desk / performance team">Trading desk / performance team</option><option value="In-house marketing team">In-house marketing team</option><option value="Brand marketing team">Brand marketing team</option><option value="Agency-supported brand team">Agency-supported brand team</option></select><div class="err" id="e-companyRole">Please select the best fit.</div></div>
+        <div class="field" style="margin-bottom:0;"><label id="volumeLabel">Estimated Monthly Media Volume</label><select id="monthlyVolume"><option value="">Select one...</option><option value="Under $10,000">Under $10,000</option><option value="$10,000 - $50,000">$10,000 - $50,000</option><option value="$50,000 - $250,000">$50,000 - $250,000</option><option value="$250,000 - $1M">$250,000 - $1M</option><option value="$1M+">$1M+</option></select><div class="err" id="e-monthlyVolume">Please select an estimated monthly volume.</div></div>
       </div>
-
       <div class="field-row" id="agencyOnlyRow">
-        <div class="field" style="margin-bottom:0;">
-          <label>How many active advertiser clients do you expect to manage?</label>
-          <select id="clientCount">
-            <option value="">Select one...</option>
-            <option value="1">1</option>
-            <option value="2-5">2-5</option>
-            <option value="6-20">6-20</option>
-            <option value="21+">21+</option>
-          </select>
-          <div class="err" id="e-clientCount">Please select an estimated client count.</div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>Do you buy media for multiple advertiser accounts?</label>
-          <select id="multiAdvertiser">
-            <option value="">Select one...</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </select>
-          <div class="err" id="e-multiAdvertiser">Please select Yes or No.</div>
-        </div>
+        <div class="field" style="margin-bottom:0;"><label>How many active advertiser clients do you expect to manage?</label><select id="clientCount"><option value="">Select one...</option><option value="1">1</option><option value="2-5">2-5</option><option value="6-20">6-20</option><option value="21+">21+</option></select><div class="err" id="e-clientCount">Please select an estimated client count.</div></div>
+        <div class="field" style="margin-bottom:0;"><label>Do you buy media for multiple advertiser accounts?</label><select id="multiAdvertiser"><option value="">Select one...</option><option value="Yes">Yes</option><option value="No">No</option></select><div class="err" id="e-multiAdvertiser">Please select Yes or No.</div></div>
       </div>
-
       <div class="field-row hidden" id="brandOnlyRow">
-        <div class="field" style="margin-bottom:0;">
-          <label>Will you run media in-house or with an agency?</label>
-          <select id="brandModel">
-            <option value="">Select one...</option>
-            <option value="In-house">In-house</option>
-            <option value="With an agency">With an agency</option>
-            <option value="Hybrid">Hybrid</option>
-          </select>
-          <div class="err" id="e-brandModel">Please select your operating model.</div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>Industry</label>
-          <input type="text" id="industry" placeholder="e.g. Healthcare, Retail, Education" />
-          <div class="err" id="e-industry">Please enter your industry.</div>
-        </div>
+        <div class="field" style="margin-bottom:0;"><label>Will you run media in-house or with an agency?</label><select id="brandModel"><option value="">Select one...</option><option value="In-house">In-house</option><option value="With an agency">With an agency</option><option value="Hybrid">Hybrid</option></select><div class="err" id="e-brandModel">Please select your operating model.</div></div>
+        <div class="field" style="margin-bottom:0;"><label>Industry</label><input type="text" id="industry" placeholder="e.g. Healthcare, Retail, Education" /><div class="err" id="e-industry">Please enter your industry.</div></div>
       </div>
-
-      <div class="field">
-        <label>Which channels matter most? <span class="label-sub">Select all that apply</span></label>
-        <div class="toggle-grid" id="channelGrid">
-          <div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Connected TV (CTV)">Connected TV (CTV)</div>
-          <div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Online Video">Online Video</div>
-          <div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Display">Display</div>
-          <div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Native">Native</div>
-          <div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Audio">Audio</div>
-        </div>
-        <div class="err" id="e-channels">Please select at least one channel.</div>
-      </div>
-
-      <div class="form-nav">
-        <button class="btn-back" onclick="goBack(2)">Back</button>
-        <button class="btn-next" onclick="goNext(2)">
-          Continue
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
+      <div class="field"><label>Which channels matter most? <span class="label-sub">Select all that apply</span></label><div class="toggle-grid" id="channelGrid"><div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Connected TV (CTV)">Connected TV (CTV)</div><div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Online Video">Online Video</div><div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Display">Display</div><div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Native">Native</div><div class="toggle-card" onclick="toggleMulti(this,'channels')" data-val="Audio">Audio</div></div><div class="err" id="e-channels">Please select at least one channel.</div></div>
+      <div class="form-nav"><button class="btn-back" onclick="goBack(2)">Back</button><button class="btn-next" onclick="goNext(2)">Continue</button></div>
     </div>
-
-    <!-- Step 3 -->
     <div class="step-panel" id="step3">
       <div class="section-label">Readiness & Next Step</div>
       <div class="field-row">
-        <div class="field" style="margin-bottom:0;">
-          <label>Programmatic Experience</label>
-          <select id="experienceLevel">
-            <option value="">Select one...</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-          </select>
-          <div class="err" id="e-experienceLevel">Please select an experience level.</div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>Are you ready to launch soon?</label>
-          <select id="launchTiming">
-            <option value="">Select one...</option>
-            <option value="Ready now">Ready now</option>
-            <option value="Within 30 days">Within 30 days</option>
-            <option value="Within 90 days">Within 90 days</option>
-            <option value="Just researching">Just researching</option>
-          </select>
-          <div class="err" id="e-launchTiming">Please select a timeline.</div>
-        </div>
+        <div class="field" style="margin-bottom:0;"><label>Programmatic Experience</label><select id="experienceLevel"><option value="">Select one...</option><option value="Beginner">Beginner</option><option value="Intermediate">Intermediate</option><option value="Advanced">Advanced</option></select><div class="err" id="e-experienceLevel">Please select an experience level.</div></div>
+        <div class="field" style="margin-bottom:0;"><label>Are you ready to launch soon?</label><select id="launchTiming"><option value="">Select one...</option><option value="Ready now">Ready now</option><option value="Within 30 days">Within 30 days</option><option value="Within 90 days">Within 90 days</option><option value="Just researching">Just researching</option></select><div class="err" id="e-launchTiming">Please select a timeline.</div></div>
       </div>
-
-      <div class="field">
-        <label>What kind of onboarding do you want?</label>
-        <div class="route-group" id="routeGroup">
-          <div class="route-card" onclick="pickSingle(this,'supportPreference')" data-val="Self-serve signup">
-            <div class="route-radio"></div>
-            <div>
-              <div class="choice-title">Self-serve signup</div>
-              <div class="choice-desc">I know what I need and want to move directly into account creation after this form.</div>
-            </div>
-          </div>
-          <div class="route-card" onclick="pickSingle(this,'supportPreference')" data-val="Guided onboarding">
-            <div class="route-radio"></div>
-            <div>
-              <div class="choice-title">Guided onboarding</div>
-              <div class="choice-desc">I want a kickoff session to align on setup and next steps before moving forward.</div>
-            </div>
-          </div>
-          <div class="route-card" onclick="pickSingle(this,'supportPreference')" data-val="Need more information first">
-            <div class="route-radio"></div>
-            <div>
-              <div class="choice-title">Need more information first</div>
-              <div class="choice-desc">I still have questions and should go back to the homepage sales agent before choosing signup or kickoff.</div>
-            </div>
-          </div>
-        </div>
-        <div class="err" id="e-supportPreference">Please choose your preferred next step.</div>
-      </div>
-
-      <div class="field">
-        <label>Optional notes</label>
-        <textarea id="notes" placeholder="Anything helpful for routing, setup, timing, stakeholders, advertiser structure, or support needs..."></textarea>
-      </div>
-
-      <div class="form-nav">
-        <button class="btn-back" onclick="goBack(3)">Back</button>
-        <button class="btn-next" onclick="goNext(3)">
-          Review
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
+      <div class="field"><label>What kind of onboarding do you want?</label><div class="route-group" id="routeGroup"><div class="route-card" onclick="pickSingle(this,'supportPreference')" data-val="Self-serve signup"><div class="route-radio"></div><div><div class="choice-title">Self-serve signup</div><div class="choice-desc">I know what I need and want to move directly into account creation after this form.</div></div></div><div class="route-card" onclick="pickSingle(this,'supportPreference')" data-val="Guided onboarding"><div class="route-radio"></div><div><div class="choice-title">Guided onboarding</div><div class="choice-desc">I want a kickoff session to align on setup and next steps before moving forward.</div></div></div><div class="route-card" onclick="pickSingle(this,'supportPreference')" data-val="Need more information first"><div class="route-radio"></div><div><div class="choice-title">Need more information first</div><div class="choice-desc">I still have questions and should go back to the homepage sales agent before choosing signup or kickoff.</div></div></div></div><div class="err" id="e-supportPreference">Please choose your preferred next step.</div></div>
+      <div class="field"><label>Optional notes</label><textarea id="notes" placeholder="Anything helpful for routing, setup, timing, stakeholders, advertiser structure, or support needs..."></textarea></div>
+      <div class="form-nav"><button class="btn-back" onclick="goBack(3)">Back</button><button class="btn-next" onclick="goNext(3)">Review</button></div>
     </div>
-
-    <!-- Step 4 -->
     <div class="step-panel" id="step4">
-      <div style="margin-bottom:24px;">
-        <div style="font-family:'DM Serif Display',serif; font-size:22px; margin-bottom:6px;">Review before submitting</div>
-        <div style="font-size:14px; color:var(--muted); line-height:1.6;">
-          We will use these answers to qualify the right next action based on where you are right now.
-        </div>
-      </div>
-
+      <div style="margin-bottom:24px;"><div style="font-family:'DM Serif Display',serif;font-size:22px;margin-bottom:6px;">Review before submitting</div><div style="font-size:14px;color:var(--muted);line-height:1.6;">We will use these answers to qualify the right next action based on where you are right now.</div></div>
       <div class="review-block" id="reviewBlock"></div>
-
-      <div class="form-nav">
-        <button class="btn-back" onclick="goBack(4)">Edit</button>
-        <button class="btn-next" id="submitBtn" onclick="doSubmit()">
-          Submit Onboarding
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
+      <div class="form-nav"><button class="btn-back" onclick="goBack(4)">Edit</button><button class="btn-next" id="submitBtn" onclick="doSubmit()">Submit Onboarding</button></div>
     </div>
   </div>
 </div>
-
-<!-- Success -->
-<div id="successView">
-  <div class="suc-wrap">
-    <div class="suc-check">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M20 6L9 17l-5-5" />
-      </svg>
-    </div>
-    <h2 class="suc-title">Onboarding submitted.</h2>
-    <p class="suc-sub" id="successLead">
-      We received your onboarding request and sent confirmation to <strong id="sucEmail"></strong>.
-    </p>
-
-    <div class="sum-box" id="sumBox"></div>
-
-    <div class="next-box">
-      <strong id="nextStepTitle">Your next step</strong>
-      <div id="recommendedNextStep"></div>
-    </div>
-
-    <div id="successActions" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
-      <button class="btn-next" id="signupNowBtn" style="display:none;" onclick="window.open(SIGNUP_URL,'_blank','noopener,noreferrer')">
-        Go to DSP Connect Signup
-      </button>
-      <button class="btn-next" id="kickoffBtn" style="display:none;" onclick="window.open(KICKOFF_URL,'_blank','noopener,noreferrer')">
-        Book Onboarding Kickoff
-      </button>
-      <button class="btn-next" id="salesAgentBtn" style="display:none;" onclick="window.open(HOMEPAGE_URL,'_blank','noopener,noreferrer')">
-        Go to DSP Connect Homepage
-      </button>
-    </div>
-
-    <div class="inline-note" id="routeSupportNote"></div>
-
-    <button class="btn-another" onclick="doReset()">Start Another Submission</button>
-  </div>
-</div>
-
+<div id="successView"><div class="suc-wrap"><div class="suc-check">✓</div><h2 class="suc-title">Onboarding submitted.</h2><p class="suc-sub" id="successLead">We received your onboarding request and sent confirmation to <strong id="sucEmail"></strong>.</p><div class="sum-box" id="sumBox"></div><div class="next-box"><strong id="nextStepTitle">Your next step</strong><div id="recommendedNextStep"></div></div><div id="successActions" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;"><button class="btn-next" id="signupNowBtn" style="display:none;" onclick="window.open(SIGNUP_URL,'_blank','noopener,noreferrer')">Go to DSP Connect Signup</button><button class="btn-next" id="kickoffBtn" style="display:none;" onclick="window.open(KICKOFF_URL,'_blank','noopener,noreferrer')">Book Onboarding Kickoff</button><button class="btn-next" id="salesAgentBtn" style="display:none;" onclick="window.open(HOMEPAGE_URL,'_blank','noopener,noreferrer')">Go to DSP Connect Homepage</button></div><div class="inline-note" id="routeSupportNote"></div><button class="btn-another" onclick="doReset()">Start Another Submission</button></div></div>
 <script>
-const HS_PORTAL_ID = '43907644';
-const HS_FORM_ID = 'edb5d62e-4ade-4e06-b542-08de6517beb5';
-const SIGNUP_URL = 'https://dsp.getdspconnect.com/auth/signup';
-const KICKOFF_URL = 'https://calendly.com/carmichaelruss/dsp-connect-onboarding';
-const HOMEPAGE_URL = 'https://getdspconnect.com';
-
-const state = {
-  accountType: '',
-  channels: [],
-  supportPreference: ''
-};
-
-const guides = {
-  1: {
-    num: 'Step 1 of 4',
-    title: 'Identify the account owner',
-    desc: 'Start with who this account is for and who should receive next-step instructions.',
-    tips: [
-      'Choose Agency if you manage advertiser accounts for clients.',
-      'Choose Brand if this account will be used by your internal marketing team.'
-    ]
-  },
-  2: {
-    num: 'Step 2 of 4',
-    title: 'Collect the right business context',
-    desc: 'We only ask the questions that affect setup, routing, and support needs.',
-    tips: [
-      'Agencies should tell us how many advertisers they expect to manage.',
-      'Brands should tell us whether buying will be in-house, agency-led, or hybrid.'
-    ]
-  },
-  3: {
-    num: 'Step 3 of 4',
-    title: 'Choose the next step',
-    desc: 'Tell us whether you are ready for signup, need a kickoff, or still need answers first.',
-    tips: [
-      'Self-serve signup is best when you are ready to create your account now.',
-      'Use the homepage sales agent first if you still need questions answered.'
-    ]
-  },
-  4: {
-    num: 'Step 4 of 4',
-    title: 'Confirm and submit',
-    desc: 'Review your answers before sending them to HubSpot and triggering the right next step.',
-    tips: [
-      'The thank-you page will show one clear next action.',
-      'You can always come back and submit another request later.'
-    ]
-  }
-};
-
-function gid(id){ return document.getElementById(id); }
-
-function esc(str) {
-  return String(str || '').replace(/[&<>\"']/g, c => (
-    {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c] || c
-  ));
-}
-
-function isHttpsUrl(v){
-  return /^https:\\/\\//i.test((v || '').trim());
-}
-
-function isEmail(v){
-  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test((v || '').trim());
-}
-
-function showErr(id, on){
-  const el = gid(id);
-  if(el) el.classList.toggle('show', !!on);
-}
-function markInvalid(id, on){
-  const el = gid(id);
-  if(el) el.classList.toggle('invalid', !!on);
-}
-function value(id){
-  const el = gid(id);
-  return el ? el.value.trim() : '';
-}
-
-function pickSingle(el, key){
-  Array.from(el.parentElement.children).forEach(node => node.classList.remove('sel'));
-  el.classList.add('sel');
-  state[key] = el.dataset.val;
-  if(key === 'accountType') syncAccountTypeUI();
-}
-function toggleMulti(el, key){
-  el.classList.toggle('sel');
-  const vals = Array.from(el.parentElement.querySelectorAll('.toggle-card.sel')).map(node => node.dataset.val);
-  state[key] = vals;
-}
-
-function syncAccountTypeUI(){
-  const isAgency = state.accountType === 'Agency';
-  gid('agencyOnlyRow').classList.toggle('hidden', !isAgency);
-  gid('brandOnlyRow').classList.toggle('hidden', isAgency);
-  gid('companyRoleLabel').textContent = isAgency ? 'Agency Type' : 'Team Type';
-  gid('volumeLabel').textContent = isAgency ? 'Estimated Monthly Managed Media Volume' : 'Estimated Monthly Media Budget';
-}
-
-function getRecommendation(){
-  if(state.supportPreference === 'Self-serve signup'){
-    return {
-      code: 'signup_now',
-      title: 'Create your DSP Connect account now',
-      supportNote: 'Direct signup is your best next step based on what you selected.'
-    };
-  }
-  if(state.supportPreference === 'Guided onboarding'){
-    return {
-      code: 'guided',
-      title: 'Book your DSP Connect onboarding kickoff',
-      supportNote: 'Kickoff is the right next step when you want guided onboarding.'
-    };
-  }
-  return {
-    code: 'sales_agent',
-    title: 'Go back to the DSP Connect homepage sales agent',
-    supportNote: 'Use the sales agent first when you still need answers before choosing signup or kickoff.'
-  };
-}
-
-function validate(step){
-  let ok = true;
-  if(step === 1){
-    showErr('e-accountType', !state.accountType);
-    ok = ok && !!state.accountType;
-
-    const cn = value('contactName');
-    showErr('e-contactName', !cn);
-    markInvalid('contactName', !cn);
-    ok = ok && !!cn;
-
-    const ce = value('contactEmail');
-    const ceBad = !isEmail(ce);
-    showErr('e-contactEmail', ceBad);
-    markInvalid('contactEmail', ceBad);
-    ok = ok && !ceBad;
-
-    const comp = value('companyName');
-    showErr('e-companyName', !comp);
-    markInvalid('companyName', !comp);
-    ok = ok && !!comp;
-
-    const web = value('website');
-    const webBad = !isHttpsUrl(web);
-    showErr('e-website', webBad);
-    markInvalid('website', webBad);
-    ok = ok && !webBad;
-  }
-
-  if(step === 2){
-    const role = value('companyRole');
-    showErr('e-companyRole', !role);
-    markInvalid('companyRole', !role);
-    ok = ok && !!role;
-
-    const vol = value('monthlyVolume');
-    showErr('e-monthlyVolume', !vol);
-    markInvalid('monthlyVolume', !vol);
-    ok = ok && !!vol;
-
-    const channelsBad = !state.channels.length;
-    showErr('e-channels', channelsBad);
-    ok = ok && !channelsBad;
-
-    if(state.accountType === 'Agency'){
-      const cc = value('clientCount');
-      showErr('e-clientCount', !cc);
-      markInvalid('clientCount', !cc);
-      ok = ok && !!cc;
-
-      const ma = value('multiAdvertiser');
-      showErr('e-multiAdvertiser', !ma);
-      markInvalid('multiAdvertiser', !ma);
-      ok = ok && !!ma;
-    }
-
-    if(state.accountType === 'Brand'){
-      const bm = value('brandModel');
-      showErr('e-brandModel', !bm);
-      markInvalid('brandModel', !bm);
-      ok = ok && !!bm;
-
-      const ind = value('industry');
-      showErr('e-industry', !ind);
-      markInvalid('industry', !ind);
-      ok = ok && !!ind;
-    }
-  }
-
-  if(step === 3){
-    const exp = value('experienceLevel');
-    showErr('e-experienceLevel', !exp);
-    markInvalid('experienceLevel', !exp);
-    ok = ok && !!exp;
-
-    const time = value('launchTiming');
-    showErr('e-launchTiming', !time);
-    markInvalid('launchTiming', !time);
-    ok = ok && !!time;
-
-    showErr('e-supportPreference', !state.supportPreference);
-    ok = ok && !!state.supportPreference;
-  }
-
-  return ok;
-}
-
-function buildSections(full = true){
-  const rec = getRecommendation();
-  if(!full){
-    return [
-      {
-        label: 'Submission Summary',
-        step: 4,
-        rows: [
-          ['Account Type', state.accountType],
-          ['Company', value('companyName')],
-          ['Email', value('contactEmail')]
-        ]
-      }
-    ];
-  }
-
-  return [
-    {
-      label: 'Contact',
-      step: 1,
-      rows: [
-        ['Account Type', state.accountType],
-        ['Name', value('contactName')],
-        ['Email', value('contactEmail')],
-        ['Company', value('companyName')],
-        ['Website', value('website')]
-      ]
-    },
-    {
-      label: 'Business',
-      step: 2,
-      rows: [
-        ['Type', value('companyRole')],
-        ['Monthly Volume', value('monthlyVolume')],
-        state.accountType === 'Agency'
-          ? ['Advertiser Clients', value('clientCount')]
-          : ['Operating Model', value('brandModel')],
-        state.accountType === 'Agency'
-          ? ['Multiple Advertisers', value('multiAdvertiser')]
-          : ['Industry', value('industry')],
-        ['Channels', state.channels.join(', ')]
-      ]
-    },
-    {
-      label: 'Readiness',
-      step: 3,
-      rows: [
-        ['Experience', value('experienceLevel')],
-        ['Launch Timing', value('launchTiming')],
-        ['Onboarding Preference', state.supportPreference],
-        ['Recommended Route', rec.title],
-        ['Notes', value('notes') || '—']
-      ]
-    }
-  ];
-}
-
-function renderReview(targetId, editable, full = true){
-  const sections = buildSections(full);
-  let html = '';
-  sections.forEach(sec => {
-    html += '<div class="review-section-head">' +
-      esc(sec.label) +
-      (editable
-        ? '<span style="font-size:11px;font-weight:600;color:var(--blue);text-decoration:underline;cursor:pointer;white-space:nowrap;" onclick="setStep(' + sec.step + ')">Edit</span>'
-        : '') +
-      '</div>';
-
-    sec.rows.forEach(row => {
-      html += '<div class="review-row">' +
-        '<span class="review-key">' + esc(row[0]) + '</span>' +
-        '<span class="review-val">' + esc(row[1] || '—') + '</span>' +
-      '</div>';
-    });
-  });
-  gid(targetId).innerHTML = html;
-}
-
-function renderGuide(step){
-  const g = guides[step];
-  gid('guidePanel').innerHTML =
-    '<div class="guide-step-num">' + esc(g.num) + '</div>' +
-    '<div class="guide-title">' + esc(g.title) + '</div>' +
-    '<div class="guide-desc">' + esc(g.desc) + '</div>' +
-    '<div class="guide-tips">' +
-      '<div class="guide-tip-label">Tips</div>' +
-      g.tips.map(t => (
-        '<div class="guide-tip"><div class="guide-tip-dot"></div><div>' + esc(t) + '</div></div>'
-      )).join('') +
-    '</div>';
-}
-
-let currentStep = 1;
-
-function setStep(n){
-  currentStep = n;
-  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-  gid('step' + n).classList.add('active');
-
-  document.querySelectorAll('.step-item').forEach(item => {
-    const s = parseInt(item.dataset.s, 10);
-    item.classList.remove('active', 'done');
-    if(s < n) item.classList.add('done');
-    if(s === n) item.classList.add('active');
-  });
-
-  if(n === 4) {
-    renderReview('reviewBlock', true, true);
-  }
-
-  renderGuide(n);
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function goNext(from){
-  if(validate(from)) setStep(from + 1);
-}
-function goBack(from){
-  setStep(from - 1);
-}
-
-async function doSubmit(){
-  const btn = gid('submitBtn');
-  btn.disabled = true;
-  btn.innerHTML =
-    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 0.9s linear infinite">' +
-    '<path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" /></svg> Submitting...';
-
-  const rec = getRecommendation();
-
-  const summary = [
-    'ACCOUNT TYPE: ' + state.accountType,
-    'CONTACT: ' + value('contactName'),
-    'EMAIL: ' + value('contactEmail'),
-    'COMPANY: ' + value('companyName'),
-    'WEBSITE: ' + value('website'),
-    'ROLE / TYPE: ' + value('companyRole'),
-    'MONTHLY VOLUME: ' + value('monthlyVolume'),
-    state.accountType === 'Agency'
-      ? 'CLIENT COUNT: ' + value('clientCount')
-      : 'OPERATING MODEL: ' + value('brandModel'),
-    state.accountType === 'Agency'
-      ? 'MULTI ADVERTISER: ' + value('multiAdvertiser')
-      : 'INDUSTRY: ' + value('industry'),
-    'CHANNELS: ' + state.channels.join(', '),
-    'EXPERIENCE: ' + value('experienceLevel'),
-    'LAUNCH TIMING: ' + value('launchTiming'),
-    'PREFERRED ONBOARDING: ' + state.supportPreference,
-    'RECOMMENDED ROUTE: ' + rec.code,
-    value('notes') ? 'NOTES: ' + value('notes') : ''
-  ].filter(Boolean).join('\\n');
-
-  const cookieStr = document.cookie || '';
-  const hutk = (cookieStr.split('; ').find(c => c.startsWith('hubspotutk=')) || '').split('=')[1] || undefined;
-
-  const payload = {
-    fields: [
-      {
-        name: 'firstname',
-        value: value('contactName').split(' ')[0] || value('contactName')
-      },
-      {
-        name: 'lastname',
-        value: value('contactName').split(' ').slice(1).join(' ') || '-'
-      },
-      { name: 'email',   value: value('contactEmail') },
-      { name: 'company', value: value('companyName') },
-      { name: 'website', value: value('website') },
-      { name: 'message', value: summary }
-    ],
-    context: {
-      hutk: hutk,
-      pageUri: window.location.href,
-      pageName: 'DSP Connect Onboarding Router'
-    }
-  };
-
-  try {
-    const res = await fetch(
-      'https://api.hsforms.com/submissions/v3/integration/submit/' + HS_PORTAL_ID + '/' + HS_FORM_ID,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }
-    );
-    if(!res.ok){
-      const err = await res.text().catch(() => '');
-      console.error('HubSpot error', res.status, err);
-    }
-  } catch(e){
-    console.warn('HubSpot network error', e);
-  }
-
-  gid('sucEmail').textContent = value('contactEmail');
-  renderReview('sumBox', false, false);
-  renderRecommendedNext();
-
-  gid('mainLayout').style.display = 'none';
-  gid('stepBar').style.display = 'none';
-  gid('successView').style.display = 'block';
-  window.scrollTo({top:0, behavior:'smooth'});
-
-  btn.disabled = false;
-  btn.innerHTML =
-    'Submit Onboarding ' +
-    '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
-    '<path d="M5 12h14M12 5l7 7-7 7" />' +
-    '</svg>';
-}
-
-function renderRecommendedNext(){
-  const rec = getRecommendation();
-  gid('successLead').innerHTML =
-    'We received your onboarding request and sent confirmation to <strong>' +
-    esc(value('contactEmail')) +
-    '</strong>.';
-
-  if(rec.code === 'signup_now'){
-    gid('nextStepTitle').textContent = 'Your next step: create your account';
-    gid('recommendedNextStep').innerHTML =
-      '<div class="next-item"><div class="next-dot"></div><div>Create your DSP Connect account now to keep onboarding moving.</div></div>';
-  } else if(rec.code === 'guided'){
-    gid('nextStepTitle').textContent = 'Your next step: book onboarding kickoff';
-    gid('recommendedNextStep').innerHTML =
-      '<div class="next-item"><div class="next-dot"></div><div>Book your onboarding kickoff so your team can align on setup and next steps.</div></div>';
-  } else {
-    gid('nextStepTitle').textContent = 'Your next step: go back to the homepage';
-    gid('recommendedNextStep').innerHTML =
-      '<div class="next-item"><div class="next-dot"></div><div>Go back to the DSP Connect homepage and use the sales agent for any remaining questions.</div></div>';
-  }
-
-  gid('signupNowBtn').style.display = rec.code === 'signup_now' ? 'inline-flex' : 'none';
-  gid('kickoffBtn').style.display = rec.code === 'guided' ? 'inline-flex' : 'none';
-  gid('salesAgentBtn').style.display = rec.code === 'sales_agent' ? 'inline-flex' : 'none';
-  gid('routeSupportNote').textContent = rec.supportNote || '';
-}
-
-function doReset(){
-  state.accountType = '';
-  state.channels = [];
-  state.supportPreference = '';
-
-  document.querySelectorAll('input, textarea').forEach(el => {
-    if(el.type !== 'button') el.value = '';
-  });
-  document.querySelectorAll('select').forEach(el => { el.selectedIndex = 0; });
-  document.querySelectorAll('.choice-card, .toggle-card, .route-card').forEach(el => el.classList.remove('sel'));
-  document.querySelectorAll('.err').forEach(el => el.classList.remove('show'));
-  document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
-
-  gid('agencyOnlyRow').classList.remove('hidden');
-  gid('brandOnlyRow').classList.add('hidden');
-
-  gid('successView').style.display = 'none';
-  gid('mainLayout').style.display = 'flex';
-  gid('stepBar').style.display = 'flex';
-
-  setStep(1);
-}
-
-syncAccountTypeUI();
-renderGuide(1);
+const HS_PORTAL_ID='43907644';
+const HS_FORM_ID='edb5d62e-4ade-4e06-b542-08de6517beb5';
+const SIGNUP_URL='https://dsp.getdspconnect.com/auth/signup';
+const KICKOFF_URL='https://calendly.com/carmichaelruss/dsp-connect-onboarding';
+const HOMEPAGE_URL='https://getdspconnect.com';
+const state={accountType:'',channels:[],supportPreference:''};
+const guides={1:{num:'Step 1 of 4',title:'Identify the account owner',desc:'Start with who this account is for and who should receive next-step instructions.',tips:['Choose Agency if you manage advertiser accounts for clients.','Choose Brand if this account will be used by your internal marketing team.']},2:{num:'Step 2 of 4',title:'Collect the right business context',desc:'We only ask the questions that affect setup, routing, and support needs.',tips:['Agencies should tell us how many advertisers they expect to manage.','Brands should tell us whether buying will be in-house, agency-led, or hybrid.']},3:{num:'Step 3 of 4',title:'Choose the next step',desc:'Tell us whether you are ready for signup, need a kickoff, or still need answers first.',tips:['Self-serve signup is best when you are ready to create your account now.','Use the homepage sales agent first if you still need questions answered.']},4:{num:'Step 4 of 4',title:'Confirm and submit',desc:'Review your answers before sending them to HubSpot and triggering the right next step.',tips:['The thank-you page will show one clear next action.','You can always come back and submit another request later.']}};
+function gid(id){return document.getElementById(id)}
+function esc(str){return String(str||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c))}
+function isHttpsUrl(v){return /^https:\/\//i.test((v||'').trim())}
+function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim())}
+function showErr(id,on){const el=gid(id);if(el)el.classList.toggle('show',!!on)}
+function markInvalid(id,on){const el=gid(id);if(el)el.classList.toggle('invalid',!!on)}
+function value(id){const el=gid(id);return el?el.value.trim():''}
+function renderGuide(step){const g=guides[step];gid('guidePanel').innerHTML='<div class="guide-step-num">'+esc(g.num)+'</div><div class="guide-title">'+esc(g.title)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-tips"><div class="guide-tip-label">Tips</div>'+g.tips.map(t=>'<div class="guide-tip"><div class="guide-tip-dot"></div><div>'+esc(t)+'</div></div>').join('')+'</div>'}
+function pickSingle(el,key){Array.from(el.parentElement.children).forEach(n=>n.classList.remove('sel'));el.classList.add('sel');state[key]=el.dataset.val;if(key==='accountType')syncAccountTypeUI()}
+function toggleMulti(el,key){el.classList.toggle('sel');state[key]=Array.from(el.parentElement.querySelectorAll('.toggle-card.sel')).map(n=>n.dataset.val)}
+function syncAccountTypeUI(){const isAgency=state.accountType==='Agency';gid('agencyOnlyRow').classList.toggle('hidden',!isAgency);gid('brandOnlyRow').classList.toggle('hidden',isAgency);gid('companyRoleLabel').textContent=isAgency?'Agency Type':'Team Type';gid('volumeLabel').textContent=isAgency?'Estimated Monthly Managed Media Volume':'Estimated Monthly Media Budget'}
+function getRecommendation(){if(state.supportPreference==='Self-serve signup')return{code:'signup_now',title:'Create your DSP Connect account now',supportNote:'Direct signup is your best next step based on what you selected.'};if(state.supportPreference==='Guided onboarding')return{code:'guided',title:'Book your DSP Connect onboarding kickoff',supportNote:'Kickoff is the right next step when you want guided onboarding.'};return{code:'sales_agent',title:'Go back to the DSP Connect homepage sales agent',supportNote:'Use the sales agent first when you still need answers before choosing signup or kickoff.'}}
+function validate(step){let ok=true;if(step===1){showErr('e-accountType',!state.accountType);ok=ok&&!!state.accountType;const cn=value('contactName');showErr('e-contactName',!cn);markInvalid('contactName',!cn);ok=ok&&!!cn;const ce=value('contactEmail'),ceBad=!isEmail(ce);showErr('e-contactEmail',ceBad);markInvalid('contactEmail',ceBad);ok=ok&&!ceBad;const comp=value('companyName');showErr('e-companyName',!comp);markInvalid('companyName',!comp);ok=ok&&!!comp;const web=value('website'),webBad=!isHttpsUrl(web);showErr('e-website',webBad);markInvalid('website',webBad);ok=ok&&!webBad} if(step===2){const role=value('companyRole');showErr('e-companyRole',!role);markInvalid('companyRole',!role);ok=ok&&!!role;const vol=value('monthlyVolume');showErr('e-monthlyVolume',!vol);markInvalid('monthlyVolume',!vol);ok=ok&&!!vol;showErr('e-channels',!state.channels.length);ok=ok&&!!state.channels.length;if(state.accountType==='Agency'){const cc=value('clientCount');showErr('e-clientCount',!cc);markInvalid('clientCount',!cc);ok=ok&&!!cc;const ma=value('multiAdvertiser');showErr('e-multiAdvertiser',!ma);markInvalid('multiAdvertiser',!ma);ok=ok&&!!ma}else if(state.accountType==='Brand'){const bm=value('brandModel');showErr('e-brandModel',!bm);markInvalid('brandModel',!bm);ok=ok&&!!bm;const ind=value('industry');showErr('e-industry',!ind);markInvalid('industry',!ind);ok=ok&&!!ind}} if(step===3){const exp=value('experienceLevel');showErr('e-experienceLevel',!exp);markInvalid('experienceLevel',!exp);ok=ok&&!!exp;const time=value('launchTiming');showErr('e-launchTiming',!time);markInvalid('launchTiming',!time);ok=ok&&!!time;showErr('e-supportPreference',!state.supportPreference);ok=ok&&!!state.supportPreference} return ok}
+function buildSections(full=true){const rec=getRecommendation();if(!full)return[{label:'Submission Summary',step:4,rows:[['Account Type',state.accountType],['Company',value('companyName')],['Email',value('contactEmail')]]}];return[{label:'Contact',step:1,rows:[['Account Type',state.accountType],['Name',value('contactName')],['Email',value('contactEmail')],['Company',value('companyName')],['Website',value('website')]]},{label:'Business',step:2,rows:[['Type',value('companyRole')],['Monthly Volume',value('monthlyVolume')],state.accountType==='Agency'?['Advertiser Clients',value('clientCount')]:['Operating Model',value('brandModel')],state.accountType==='Agency'?['Multiple Advertisers',value('multiAdvertiser')]:['Industry',value('industry')],['Channels',state.channels.join(', ')]]},{label:'Readiness',step:3,rows:[['Experience',value('experienceLevel')],['Launch Timing',value('launchTiming')],['Onboarding Preference',state.supportPreference],['Recommended Route',rec.title],['Notes',value('notes')||'—']]}]}
+function renderReview(targetId,editable,full=true){const sections=buildSections(full);let html='';sections.forEach(sec=>{html+='<div class="review-section-head">'+esc(sec.label)+(editable?'<span style="font-size:11px;font-weight:600;color:var(--blue);text-decoration:underline;cursor:pointer;white-space:nowrap;" onclick="setStep('+sec.step+')">Edit</span>':'')+'</div>';sec.rows.forEach(row=>{html+='<div class="review-row"><span class="review-key">'+esc(row[0])+'</span><span class="review-val">'+esc(row[1]||'—')+'</span></div>'})});gid(targetId).innerHTML=html}
+let currentStep=1;function setStep(n){currentStep=n;document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));gid('step'+n).classList.add('active');document.querySelectorAll('.step-item').forEach(item=>{const s=parseInt(item.dataset.s,10);item.classList.remove('active','done');if(s<n)item.classList.add('done');if(s===n)item.classList.add('active')});if(n===4)renderReview('reviewBlock',true,true);renderGuide(n);window.scrollTo({top:0,behavior:'smooth'})}
+function goNext(from){if(validate(from))setStep(from+1)} function goBack(from){setStep(from-1)}
+async function doSubmit(){const btn=gid('submitBtn');btn.disabled=true;btn.textContent='Submitting...';const rec=getRecommendation();const summary=['ACCOUNT TYPE: '+state.accountType,'CONTACT: '+value('contactName'),'EMAIL: '+value('contactEmail'),'COMPANY: '+value('companyName'),'WEBSITE: '+value('website'),'ROLE / TYPE: '+value('companyRole'),'MONTHLY VOLUME: '+value('monthlyVolume'),state.accountType==='Agency'?'CLIENT COUNT: '+value('clientCount'):'OPERATING MODEL: '+value('brandModel'),state.accountType==='Agency'?'MULTI ADVERTISER: '+value('multiAdvertiser'):'INDUSTRY: '+value('industry'),'CHANNELS: '+state.channels.join(', '),'EXPERIENCE: '+value('experienceLevel'),'LAUNCH TIMING: '+value('launchTiming'),'PREFERRED ONBOARDING: '+state.supportPreference,'RECOMMENDED ROUTE: '+rec.code,value('notes')?'NOTES: '+value('notes'):''].filter(Boolean).join('
+');const cookieStr=document.cookie||'';const hutk=(cookieStr.split('; ').find(c=>c.startsWith('hubspotutk='))||'').split('=')[1]||undefined;const payload={fields:[{name:'firstname',value:value('contactName').split(' ')[0]||value('contactName')},{name:'lastname',value:value('contactName').split(' ').slice(1).join(' ')||'-'},{name:'email',value:value('contactEmail')},{name:'company',value:value('companyName')},{name:'website',value:value('website')},{name:'message',value:summary}],context:{hutk:hutk,pageUri:window.location.href,pageName:'DSP Connect Onboarding Router'}};try{await fetch('https://api.hsforms.com/submissions/v3/integration/submit/'+HS_PORTAL_ID+'/'+HS_FORM_ID,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})}catch(e){console.warn('HubSpot network error',e)}gid('sucEmail').textContent=value('contactEmail');renderReview('sumBox',false,false);renderRecommendedNext();gid('mainLayout').style.display='none';gid('stepBar').style.display='none';gid('successView').style.display='block';window.scrollTo({top:0,behavior:'smooth'});btn.disabled=false;btn.textContent='Submit Onboarding'}
+function renderRecommendedNext(){const rec=getRecommendation();gid('successLead').innerHTML='We received your onboarding request and sent confirmation to <strong>'+esc(value('contactEmail'))+'</strong>.';if(rec.code==='signup_now'){gid('nextStepTitle').textContent='Your next step: create your account';gid('recommendedNextStep').innerHTML='<div class="next-item"><div class="next-dot"></div><div>Create your DSP Connect account now to keep onboarding moving.</div></div>'}else if(rec.code==='guided'){gid('nextStepTitle').textContent='Your next step: book onboarding kickoff';gid('recommendedNextStep').innerHTML='<div class="next-item"><div class="next-dot"></div><div>Book your onboarding kickoff so your team can align on setup and next steps.</div></div>'}else{gid('nextStepTitle').textContent='Your next step: go back to the homepage';gid('recommendedNextStep').innerHTML='<div class="next-item"><div class="next-dot"></div><div>Go back to the DSP Connect homepage and use the sales agent for any remaining questions.</div></div>'}gid('signupNowBtn').style.display=rec.code==='signup_now'?'inline-flex':'none';gid('kickoffBtn').style.display=rec.code==='guided'?'inline-flex':'none';gid('salesAgentBtn').style.display=rec.code==='sales_agent'?'inline-flex':'none';gid('routeSupportNote').textContent=rec.supportNote||''}
+function doReset(){state.accountType='';state.channels=[];state.supportPreference='';document.querySelectorAll('input,textarea').forEach(el=>{el.value=''});document.querySelectorAll('select').forEach(el=>{el.selectedIndex=0});document.querySelectorAll('.choice-card,.toggle-card,.route-card').forEach(el=>el.classList.remove('sel'));document.querySelectorAll('.err').forEach(el=>el.classList.remove('show'));document.querySelectorAll('.invalid').forEach(el=>el.classList.remove('invalid'));gid('agencyOnlyRow').classList.remove('hidden');gid('brandOnlyRow').classList.add('hidden');gid('successView').style.display='none';gid('mainLayout').style.display='flex';gid('stepBar').style.display='flex';setStep(1)}
+syncAccountTypeUI();setStep(1);
 </script>
 </body>
 </html>
