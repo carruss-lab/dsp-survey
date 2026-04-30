@@ -82,8 +82,8 @@ select:focus { border-color: var(--blue); }
 .review-section-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); padding: 10px 20px; background: #eef0f6; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 .review-row, .sum-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 20px; border-bottom: 1px solid var(--border); gap: 24px; }
 .review-row:last-child, .sum-row:last-child { border-bottom: none; }
-.review-key, .sum-k { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
-.review-val, .sum-v { font-size: 14px; color: var(--text); text-align: right; }
+.review-key, .sum-k { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; max-width: 42%; }
+.review-val, .sum-v { font-size: 14px; color: var(--text); text-align: right; flex: 1; min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
 .edit-link { font-size: 11px; font-weight: 600; color: var(--blue); text-decoration: underline; cursor: pointer; white-space: nowrap; }
 .err { font-size: 12px; color: var(--error); margin-top: 6px; display: none; }
 .err.show { display: block; }
@@ -110,10 +110,36 @@ select:focus { border-color: var(--blue); }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @media (max-width: 768px) {
   .guide { display: none; }
-  .main { padding: 32px 20px; }
-  .step-bar { padding: 0 20px; }
-  .step-item { padding: 0 16px; }
+  .main { padding: 28px 18px 40px; max-width: 100%; }
+  .hero-note, .inline-note, .next-box, .review-block, .sum-box { margin-left: 0; margin-right: 0; }
+  .step-bar { padding: 0 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .step-item { padding: 0 14px; }
+  .step-label { font-size: 12px; }
   .field-row, .choice-grid, .goal-grid { grid-template-columns: 1fr; }
+  .form-nav { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
+  .form-nav .btn-back, .form-nav .btn-next { width: 100%; justify-content: center; }
+  .route-card, .choice-card, .goal-card, .toggle-card { padding: 14px; }
+  .review-row, .sum-row { flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px 16px; }
+  .review-key, .sum-k { max-width: 100%; }
+  .review-val, .sum-v { text-align: left; width: 100%; }
+  .suc-wrap { padding: 36px 20px 48px; }
+  .suc-title { font-size: 28px; }
+  #successView .btn-next, #successView .btn-another { width: 100%; justify-content: center; }
+  #successView [style*='display:flex;gap:12px'] { display: flex !important; flex-direction: column; align-items: stretch !important; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 15px; }
+  .main { padding: 24px 16px 36px; }
+  .hero-note { padding: 16px; }
+  .section-label { margin-bottom: 14px; }
+  input[type="text"], input[type="url"], input[type="number"], input[type="email"], input[type="date"], textarea, select { font-size: 16px; padding: 12px; }
+  .toggle-grid { gap: 6px; }
+  .toggle-card { width: 100%; justify-content: center; }
+  .choice-title { font-size: 15px; }
+  .choice-desc { font-size: 12px; }
+  .guide-title { font-size: 20px; }
+  .step-bar { height: 52px; }
 }
 </style>
 </head>
@@ -341,7 +367,7 @@ select:focus { border-color: var(--blue); }
     <div class="step-panel" id="step4">
       <div style="margin-bottom:24px;">
         <div style="font-family:'DM Serif Display',serif; font-size:22px; margin-bottom:6px;">Review before submitting</div>
-        <div style="font-size:14px; color:var(--muted); line-height:1.6;">We will use these answers to route the correct onboarding next step and send your team the right instructions.</div>
+        <div style="font-size:14px; color:var(--muted); line-height:1.6;">We will use these answers to qualify the right next action: direct signup or onboarding kickoff.</div>
       </div>
       <div class="review-block" id="reviewBlock"></div>
       <div class="form-nav">
@@ -356,13 +382,17 @@ select:focus { border-color: var(--blue); }
   <div class="suc-wrap">
     <div class="suc-check"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
     <h2 class="suc-title">Onboarding submitted.</h2>
-    <p class="suc-sub">We received your information and mapped the recommended next step based on your account type, readiness, and onboarding preference. Instructions will also be sent to <strong id="sucEmail"></strong>.</p>
+    <p class="suc-sub">We received your onboarding request and sent the next-step recommendation to <strong id="sucEmail"></strong>. Based on your answers, your best next step is one of two actions: create your DSP Connect account or book your onboarding kickoff.</p>
     <div class="sum-box" id="sumBox"></div>
     <div class="next-box">
-      <strong>Recommended next step</strong>
+      <strong>Your next step</strong>
       <div id="recommendedNextStep"></div>
     </div>
-    <button class="btn-next" id="signupNowBtn" style="display:none;" onclick="window.open('https://dsp.getdspconnect.com/auth/signup','_blank','noopener,noreferrer')">Go to DSP Connect Signup</button>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+      <button class="btn-next" id="signupNowBtn" style="display:none;" onclick="window.open(SIGNUP_URL,'_blank','noopener,noreferrer')">Go to DSP Connect Signup</button>
+      <button class="btn-next" id="kickoffBtn" style="display:none;" onclick="window.open(KICKOFF_URL,'_blank','noopener,noreferrer')">Book Onboarding Kickoff</button>
+    </div>
+    <div class="inline-note" style="margin-top:18px; margin-bottom:20px;">If you still have questions before kickoff, use the sales agent on the DSP Connect homepage first. That is the best place to get answers and confirm fit before booking time.</div>
     <button class="btn-another" style="margin-top:16px;" onclick="doReset()">Start Another Submission</button>
   </div>
 </div>
@@ -376,6 +406,8 @@ const HUBSPOT_FORM_OPTIONS = {
   alternateForm: 'bdc403c7-5674-496e-b26f-b45757538416'
 };
 const SIGNUP_URL = 'https://dsp.getdspconnect.com/auth/signup';
+const KICKOFF_URL = 'https://calendly.com/carmichaelruss/dsp-connect-onboarding';
+const HOMEPAGE_URL = '/';
 
 const state = {
   accountType: '',
@@ -447,32 +479,32 @@ function getRecommendation(){
   if(pref === 'Self-serve signup' && (exp === 'Advanced' || timing === 'Ready now')) {
     return {
       code: 'signup_now',
-      title: 'Move directly to DSP Connect signup',
+      title: 'Create your DSP Connect account now',
       bullets: [
-        'You appear ready for a self-serve start.',
-        'After submitting, send the team directly to DSP Connect signup.',
-        'Keep a follow-up email from HubSpot as backup in case they do not finish account creation.'
+        'Your answers indicate you are ready for self-serve signup.',
+        'Create your DSP Connect account now to keep onboarding moving.',
+        'If questions come up before kickoff, use the sales agent on the homepage first.'
       ]
     };
   }
   if(pref === 'Guided onboarding') {
     return {
       code: 'guided',
-      title: 'Route into guided onboarding first',
+      title: 'Book your DSP Connect onboarding kickoff',
       bullets: [
-        'Your team should follow up before or during signup.',
-        'Use HubSpot to assign ownership and send onboarding instructions.',
-        'Signup can still be the next action after the human touchpoint.'
+        'Your answers indicate you should start with a guided kickoff.',
+        'Book onboarding so your team can align on setup and next steps.',
+        'If you still have questions first, use the sales agent on the homepage before booking.'
       ]
     };
   }
   return {
-    code: 'evaluate',
-    title: 'Send a lighter next-step path first',
+    code: 'guided',
+    title: 'Use the sales agent first, then book kickoff if needed',
     bullets: [
-      'This account is still evaluating or needs more context.',
-      'Use a thank-you page or email sequence to explain fit, onboarding options, and when to sign up.',
-      'Route to signup only after follow-up or readiness confirmation.'
+      'You are not ready for direct signup yet.',
+      'Use the sales agent on the homepage to get questions answered and confirm fit.',
+      'Once qualified, the only next action should be booking kickoff.'
     ]
   };
 }
@@ -653,6 +685,7 @@ function renderRecommendedNext(){
   const html = rec.bullets.map(t => '<div class="next-item"><div class="next-dot"></div><div>' + esc(t) + '</div></div>').join('');
   gid('recommendedNextStep').innerHTML = html;
   gid('signupNowBtn').style.display = rec.code === 'signup_now' ? 'inline-flex' : 'none';
+  gid('kickoffBtn').style.display = rec.code === 'guided' ? 'inline-flex' : 'none';
 }
 
 function doReset(){
